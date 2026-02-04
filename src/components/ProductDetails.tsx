@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Star, Heart, Share2, ChevronDown, ChevronUp, Truck, RotateCcw, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Product } from "@/store/useQuickViewStore";
+import { useCartStore } from "@/store/useCartStore";
 import { formatPrice } from "@/lib/utils";
 import AddToCartButton from "@/components/AddToCartButton";
 
@@ -24,6 +26,18 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
   
   const [selectedImage, setSelectedImage] = useState(0);
   const [openAccordion, setOpenAccordion] = useState<string | null>("shipping");
+  const router = useRouter();
+  const { addToCart } = useCartStore();
+
+  const handleBuyNow = () => {
+    addToCart({
+      id: product.id.toString(),
+      name: product.name,
+      price: product.price,
+      image: product.image,
+    });
+    router.push("/checkout");
+  };
 
   const toggleAccordion = (id: string) => {
     setOpenAccordion(openAccordion === id ? null : id);
@@ -124,7 +138,10 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
             variant="outline"
             className="w-full rounded-none border-black py-4 text-sm font-bold uppercase tracking-widest hover:bg-black hover:text-white"
           />
-          <button className="w-full bg-black py-4 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:bg-gray-800">
+          <button 
+            onClick={handleBuyNow}
+            className="w-full bg-black py-4 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:bg-gray-800"
+          >
             Buy It Now
           </button>
         </div>

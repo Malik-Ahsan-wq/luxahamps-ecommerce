@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useCartStore } from '@/store/useCartStore'
 import { Badge } from '@/components/ui/badge'
+import AuthModal from '@/components/AuthModal'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   
   const { openCart, getCartItemsCount } = useCartStore();
   const cartCount = getCartItemsCount();
@@ -50,59 +52,16 @@ export default function Navbar() {
           <div className="flex items-center gap-8">
             
             {/* DESKTOP MENU (RIGHT SIDE, NOT CENTER) */}
-            <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-              <Link href="/" className="hover:text-pink-600">HOME</Link>
-
-              <div
-                className="relative"
-                onMouseEnter={() => setIsOpen(true)}
-                onMouseLeave={() => setIsOpen(false)}
-              >
-                {/* Link with arrow */}
-                <Link
-                  href="/products"
-                  className="hover:text-pink-600 flex items-center gap-1 font-medium"
-                >
-                  SHOP
-                  <ChevronDownIcon className="w-4 h-4 transition-transform duration-300" 
-                    style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }} 
-                  />
-                </Link>
-
-                {/* Dropdown menu */}
-                {isOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-40 bg-white shadow-lg rounded-md border border-gray-200 z-50">
-                    <Link
-                      href="/products"
-                      className="block px-4 py-2 hover:bg-pink-100 text-gray-700"
-                    >
-                      All Products
-                    </Link>
-                    <Link
-                      href="/products"
-                      className="block px-4 py-2 hover:bg-pink-100 text-gray-700"
-                    >
-                      Clothing
-                    </Link>
-                    <Link
-                      href="/products"
-                      className="block px-4 py-2 hover:bg-pink-100 text-gray-700"
-                    >
-                      Accessories
-                    </Link>
-                  </div>
-                )}
-              </div>
-
-              <Link href="/admin" className="hover:text-pink-600 flex items-center gap-1">
-                <LayoutDashboard className="w-4 h-4" />
-                ADMIN
+            <div className="hidden md:flex items-center space-x-8">
+              <Link href="/" className="text-sm font-medium hover:text-pink-600 transition-colors">HOME</Link>
+              <Link href="/products" className="text-sm font-medium hover:text-pink-600 transition-colors">SHOP</Link>
+              <Link href="/gift-builder" className="text-sm font-medium text-pink-600 hover:text-pink-700 transition-colors flex items-center gap-1">
+                <Gift className="w-4 h-4" /> MAKE YOUR GIFT
               </Link>
-
-              <button className="bg-pink-600 text-white px-5 py-2  rounded-md hover:bg-pink-700 transition flex items-center">
-                <Gift className="w-4 h-5 mr-1 inline-block" />  MAKE YOUR OWN
-              </button>
-            </nav>
+              <Link href="/admin" className="text-sm font-medium hover:text-pink-600 transition-colors flex items-center gap-1">
+                <LayoutDashboard className="w-4 h-4" /> ADMIN
+              </Link>
+            </div>
 
             {/* ICONS (ALWAYS VISIBLE) */}
             <div className="flex items-center gap-4">
@@ -111,9 +70,9 @@ export default function Navbar() {
                 onClick={() => setSearchOpen(true)}
               />
               
-              <Link href="/admin">
+              <div onClick={() => setIsAuthModalOpen(true)}>
                 <User className="w-5 h-5 cursor-pointer hover:text-pink-600" />
-              </Link>
+              </div>
               
               <Heart className="w-5 h-5 cursor-pointer hover:text-pink-600" />
               
@@ -137,10 +96,37 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden bg-white border-t p-4 space-y-4 absolute w-full z-50 shadow-lg">
-          <Link href="/" className="block font-medium hover:text-pink-600" onClick={() => setOpen(false)}>HOME</Link>
-          <Link href="/products" className="block font-medium hover:text-pink-600" onClick={() => setOpen(false)}>SHOP</Link>
-          <Link href="/admin" className="block font-medium hover:text-pink-600" onClick={() => setOpen(false)}>ADMIN</Link>
+        <div className="md:hidden fixed inset-0 top-[72px] bg-white z-50 overflow-y-auto">
+          <div className="p-4 space-y-6">
+             <div className="space-y-4">
+              <Link href="/" className="block text-lg font-medium hover:text-pink-600 border-b pb-2" onClick={() => setOpen(false)}>HOME</Link>
+              <Link href="/products" className="block text-lg font-medium hover:text-pink-600 border-b pb-2" onClick={() => setOpen(false)}>SHOP</Link>
+              <Link href="/gift-builder" className="block text-lg font-medium text-pink-600 hover:text-pink-700 border-b pb-2 flex items-center gap-2" onClick={() => setOpen(false)}>
+                <Gift className="w-5 h-5" /> MAKE YOUR GIFT
+              </Link>
+              <Link href="/admin" className="block text-lg font-medium hover:text-pink-600 border-b pb-2" onClick={() => setOpen(false)}>ADMIN</Link>
+             </div>
+
+             <div className="pt-4">
+                <button 
+                  onClick={() => {
+                    setOpen(false);
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-md py-3 text-gray-700 hover:bg-gray-50 mb-4"
+                >
+                  <User className="w-5 h-5" /> Login / Sign Up
+                </button>
+                
+                <Link 
+                  href="/gift-builder"
+                  onClick={() => setOpen(false)}
+                  className="w-full bg-pink-600 text-white px-5 py-3 rounded-md hover:bg-pink-700 transition flex items-center justify-center"
+                >
+                  <Gift className="w-5 h-5 mr-2" />  MAKE YOUR OWN
+                </Link>
+             </div>
+          </div>
         </div>
       )}
 
@@ -152,6 +138,8 @@ export default function Navbar() {
          <input type="text" placeholder="Search..." className="flex-1 outline-none text-lg" autoFocus={searchOpen} />
          <X className="w-6 h-6 cursor-pointer hover:text-red-500" onClick={() => setSearchOpen(false)} />
       </div>
+
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </>
   )
 }

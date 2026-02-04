@@ -6,6 +6,12 @@ export interface Product {
   name: string;
   price: number;
   image: string;
+  // Optional gift bundle properties
+  isGift?: boolean;
+  giftItems?: { product: Product; quantity: number }[];
+  giftMessage?: string;
+  recipientName?: string;
+  occasion?: string;
 }
 
 export interface CartItem extends Product {
@@ -38,7 +44,15 @@ export const useCartStore = create<CartState>()(
       
       addToCart: (product) => {
         set((state) => {
-          const existingItem = state.cart.find((item) => item.id === product.id);
+          // If it's a gift bundle, always add as a new item (don't merge)
+          if (product.isGift) {
+             return {
+              isOpen: true,
+              cart: [...state.cart, { ...product, quantity: 1 }],
+            };
+          }
+
+          const existingItem = state.cart.find((item) => item.id === product.id && !item.isGift);
           
           if (existingItem) {
             // If item exists, increase quantity

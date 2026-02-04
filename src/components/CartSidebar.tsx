@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { cn, formatPrice } from "@/lib/utils";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+
 
 export default function CartSidebar() {
   const {
@@ -18,6 +21,7 @@ export default function CartSidebar() {
     getCartItemsCount,
   } = useCartStore();
 
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -121,7 +125,23 @@ export default function CartSidebar() {
                               <h3>{item.name}</h3>
                               <p className="ml-4">{formatPrice(item.price * item.quantity)}</p>
                             </div>
-                            <p className="mt-1 text-sm text-gray-500">{formatPrice(item.price)} each</p>
+                            {item.isGift ? (
+                              <div className="mt-1 text-sm text-gray-500">
+                                <p className="text-xs font-medium mb-1 text-pink-600">Gift Bundle includes:</p>
+                                <ul className="list-disc pl-4 text-xs space-y-0.5 mb-2">
+                                  {item.giftItems?.map((giftItem, idx) => (
+                                    <li key={idx}>{giftItem.quantity}x {giftItem.product.name}</li>
+                                  ))}
+                                </ul>
+                                {item.giftMessage && (
+                                  <div className="text-xs bg-gray-50 p-1.5 rounded italic border border-gray-100">
+                                    "{item.giftMessage.length > 50 ? item.giftMessage.substring(0, 50) + '...' : item.giftMessage}"
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <p className="mt-1 text-sm text-gray-500">{formatPrice(item.price)} each</p>
+                            )}
                           </div>
                           <div className="flex items-center justify-between text-sm">
                             <div className="flex items-center rounded-lg border border-gray-200">
@@ -169,6 +189,10 @@ export default function CartSidebar() {
                   </p>
                   <div className="space-y-3">
                     <button
+                      onClick={() => {
+                        closeCart();
+                        router.push("/checkout");
+                      }}
                       className="flex w-full items-center justify-center rounded-full bg-black px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-gray-800 transition-colors"
                     >
                       Checkout <ArrowRight className="ml-2 h-4 w-4" />

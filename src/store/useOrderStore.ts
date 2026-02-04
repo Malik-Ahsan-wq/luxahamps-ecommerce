@@ -4,6 +4,7 @@ import { CartItem } from './useCartStore';
 
 export interface Order {
   id: string;
+  userId?: string;
   customer: {
     name: string;
     email: string;

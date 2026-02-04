@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useProductStore } from "@/store/useProductStore";
 import ProductCard from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,8 @@ export default function ProductsPage() {
     applyFilters,
   } = useProductStore();
 
+  const [showFilters, setShowFilters] = useState(false);
+
   // Initial apply (though store might handle it, good to ensure)
   useEffect(() => {
     applyFilters();
@@ -45,13 +47,26 @@ export default function ProductsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">All Products</h1>
+      <h1 className="mb-8 text-3xl font-bold text-center lg:text-left">All Products</h1>
 
-      <div className="flex flex-col gap-8 lg:flex-row">
+      <div className="flex flex-col lg:flex-row gap-8">
+        
+        {/* Mobile Filter Toggle */}
+        <div className="lg:hidden">
+          <Button 
+            variant="outline" 
+            onClick={() => setShowFilters(!showFilters)} 
+            className="w-full flex items-center justify-center gap-2"
+          >
+            <Filter className="w-4 h-4" /> {showFilters ? "Hide Filters" : "Show Filters"}
+          </Button>
+        </div>
+
         {/* Sidebar Filters */}
-        <aside className="w-full space-y-6 lg:w-64">
-          <div className="rounded-lg border p-4 shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
+        <aside className={`w-full lg:w-64 p-0 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+          <div className="rounded-lg border bg-white p-4 shadow-sm space-y-6 sticky top-24">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold flex items-center gap-2">
                 <Filter className="h-4 w-4" /> Filters
               </h2>
@@ -65,102 +80,105 @@ export default function ProductsPage() {
               </Button>
             </div>
 
-            {/* Category Filter */}
-            <div className="space-y-2 mb-6">
-              <Label>Category</Label>
-              <Select
-                value={filters.category || "all"}
-                onValueChange={(val) =>
-                  setFilter("category", val === "all" ? null : val)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="All Categories" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {uniqueCategories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Filters Grid: stacked on mobile, vertical on desktop */}
+            <div className="grid grid-cols-1 gap-6">
+              {/* Category */}
+              <div>
+                <Label className="mb-2 block">Category</Label>
+                <Select
+                  value={filters.category || "all"}
+                  onValueChange={(val) =>
+                    setFilter("category", val === "all" ? null : val)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {uniqueCategories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Color Filter */}
-            <div className="space-y-2 mb-6">
-              <Label>Color</Label>
-              <Select
-                value={filters.color || "all"}
-                onValueChange={(val) =>
-                  setFilter("color", val === "all" ? null : val)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="All Colors" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Colors</SelectItem>
-                  {uniqueColors.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              {/* Color */}
+              <div>
+                <Label className="mb-2 block">Color</Label>
+                <Select
+                  value={filters.color || "all"}
+                  onValueChange={(val) =>
+                    setFilter("color", val === "all" ? null : val)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Colors" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Colors</SelectItem>
+                    {uniqueColors.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Size Filter */}
-            <div className="space-y-2 mb-6">
-              <Label>Size</Label>
-              <Select
-                value={filters.size || "all"}
-                onValueChange={(val) =>
-                  setFilter("size", val === "all" ? null : val)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="All Sizes" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Sizes</SelectItem>
-                  {uniqueSizes.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              {/* Size */}
+              <div>
+                <Label className="mb-2 block">Size</Label>
+                <Select
+                  value={filters.size || "all"}
+                  onValueChange={(val) =>
+                    setFilter("size", val === "all" ? null : val)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Sizes" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Sizes</SelectItem>
+                    {uniqueSizes.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Availability Filter */}
-            <div className="space-y-2">
-              <Label>Availability</Label>
-              <Select
-                value={
-                  filters.inStock === null
-                    ? "all"
-                    : filters.inStock
-                    ? "in-stock"
-                    : "out-of-stock"
-                }
-                onValueChange={(val) =>
-                  setFilter(
-                    "inStock",
-                    val === "all" ? null : val === "in-stock"
-                  )
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="All Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="in-stock">In Stock</SelectItem>
-                  <SelectItem value="out-of-stock">Out of Stock</SelectItem>
-                </SelectContent>
-              </Select>
+              {/* Availability */}
+              <div>
+                <Label className="mb-2 block">Availability</Label>
+                <Select
+                  value={
+                    filters.inStock === null
+                      ? "all"
+                      : filters.inStock
+                      ? "in-stock"
+                      : "out-of-stock"
+                  }
+                  onValueChange={(val) =>
+                    setFilter(
+                      "inStock",
+                      val === "all" ? null : val === "in-stock"
+                    )
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="in-stock">In Stock</SelectItem>
+                    <SelectItem value="out-of-stock">Out of Stock</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </aside>
