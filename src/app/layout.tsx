@@ -3,6 +3,8 @@ import { Playfair_Display, Poppins } from 'next/font/google'
 import "./globals.css";
 import 'swiper/css';
 import 'swiper/css/navigation';
+import CartSidebar from "@/components/CartSidebar";
+import QuickViewModal from "@/components/QuickViewModal";
 
 
 const playfair = Playfair_Display({
@@ -33,6 +35,8 @@ export default function RootLayout({
         className={`${playfair.variable} ${poppins.variable} antialiased`}
       >
         {children}
+        <CartSidebar />
+        <QuickViewModal />
       </body>
     </html>
   );

@@ -1,5 +1,10 @@
+"use client";
+
 import React from 'react';
 import { Heart, Search, Star } from 'lucide-react';
+import AddToCartButton from '@/components/AddToCartButton';
+import { useQuickViewStore } from '@/store/useQuickViewStore';
+import Link from 'next/link';
 
 const products = [
   { id: 1, name: "THE PRODUCT IS FOR YOUR GIRL", price: 977, oldPrice: 1500, img: "/assets/k2wtitnfsvysr7yuop8q.webp", discount: "35% OFF" },
@@ -13,12 +18,16 @@ const products = [
 ];
 
 const ProductSection = () => {
+  const openQuickView = useQuickViewStore((state) => state.openQuickView);
+
   return (
     <div className="max-w-7xl mx-auto px-2 md:px-4 py-12">
       {/* Grid: 2 columns on mobile, 4 on desktop */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
         {products.map((product) => (
-          <div key={product.id} className="group cursor-pointer">
+          <div key={product.id} className="group cursor-pointer relative">
+            <Link href={`/product/${product.id}`} className="absolute inset-0 z-10" aria-label={`View ${product.name}`} />
+            
             {/* Image Container */}
             <div className="relative aspect-square overflow-hidden rounded-sm bg-gray-100">
               
@@ -34,10 +43,24 @@ const ProductSection = () => {
 
               {/* Action Icons (Desktop Only) */}
               <div className="absolute top-2 right-2 z-20 hidden md:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button className="p-2 bg-white rounded-full shadow-md hover:bg-black hover:text-white transition-colors">
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openQuickView({
+                      id: product.id.toString(),
+                      name: product.name,
+                      price: product.price,
+                      oldPrice: product.oldPrice,
+                      image: product.img,
+                      discount: product.discount
+                    });
+                  }}
+                  className="p-2 bg-white rounded-full shadow-md hover:bg-black hover:text-white transition-colors relative z-30"
+                >
                   <Search size={14} />
                 </button>
-                <button className="p-2 bg-white rounded-full shadow-md hover:bg-black hover:text-white transition-colors">
+                <button className="p-2 bg-white rounded-full shadow-md hover:bg-black hover:text-white transition-colors relative z-30">
                   <Heart size={14} />
                 </button>
               </div>
@@ -52,9 +75,17 @@ const ProductSection = () => {
               {/* Add to Cart Button */}
               {/* Added: translate-y-0 for mobile (always visible) and md:translate-y-full (hidden on desktop until hover) */}
               <div className="absolute bottom-0 left-0 w-full translate-y-0 md:translate-y-full md:group-hover:translate-y-0 transition-transform duration-300 ease-out z-20">
-                <button className="w-full bg-black/80 md:bg-black text-white py-2 md:py-3 text-[10px] md:text-sm font-bold uppercase tracking-widest hover:bg-pink-600 transition-colors">
-                  Add to Cart
-                </button>
+                <div className="relative z-30">
+                  <AddToCartButton 
+                    product={{
+                      id: product.id.toString(),
+                      name: product.name,
+                      price: product.price,
+                      image: product.img
+                    }}
+                    className="w-full rounded-none bg-black/80 md:bg-black py-2 md:py-3 text-[10px] md:text-sm font-bold uppercase tracking-widest hover:bg-pink-600 transition-colors"
+                  />
+                </div>
               </div>
             </div>
 
