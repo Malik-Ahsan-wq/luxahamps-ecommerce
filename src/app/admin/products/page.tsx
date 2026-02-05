@@ -105,7 +105,7 @@ export default function AdminProductsPage() {
   return (
    <div className="container mx-auto max-w-7xl p-4 md:p-8 space-y-8">
   {/* Header Section */}
-  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-6">
+  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-gray-300 pb-6">
     <div>
       <h1 className="text-3xl font-extrabold tracking-tight">Products</h1>
       <p className="text-muted-foreground mt-1 text-sm">
@@ -118,7 +118,7 @@ export default function AdminProductsPage() {
   </div>
 
   {/* Desktop Table View (Hidden on Mobile) */}
-  <div className="hidden md:block rounded-xl border bg-card shadow-sm overflow-hidden">
+  <div className="hidden md:block rounded-xl border border-gray-300 bg-card shadow-sm overflow-hidden">
     <Table>
       <TableHeader className="bg-muted/50">
         <TableRow>
@@ -134,7 +134,7 @@ export default function AdminProductsPage() {
         {products.map((product) => (
           <TableRow key={product.id} className="hover:bg-muted/30 transition-colors">
             <TableCell>
-              <div className="relative h-12 w-12 overflow-hidden rounded-lg border bg-secondary">
+              <div className="relative h-12 w-12 overflow-hidden rounded-lg border border-gray-300 bg-secondary">
                 <Image
                   src={product.image}
                   alt={product.name}
@@ -192,9 +192,9 @@ export default function AdminProductsPage() {
   {/* Mobile Card View (Hidden on Desktop) */}
   <div className="grid grid-cols-1 gap-4 md:hidden">
     {products.map((product) => (
-      <div key={product.id} className="rounded-xl border bg-card p-4 shadow-sm space-y-4">
+      <div key={product.id} className="rounded-xl border border-gray-300 bg-card p-4 shadow-sm space-y-4">
         <div className="flex items-center gap-4">
-          <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border">
+          <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-gray-300">
             <Image src={product.image} alt={product.name} fill className="object-cover" />
           </div>
           <div className="flex-1 min-w-0">
@@ -203,7 +203,7 @@ export default function AdminProductsPage() {
             <p className="font-bold text-primary mt-1">{formatPrice(product.price)}</p>
           </div>
         </div>
-        <div className="flex items-center justify-between pt-3 border-t">
+        <div className="flex items-center justify-between pt-3 border-t border-gray-300">
           <span
             className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
               product.inStock ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
@@ -273,7 +273,7 @@ export default function AdminProductsPage() {
           <Label className="text-sm font-semibold">Product Image</Label>
           <div className="flex flex-wrap items-center gap-4">
             {formData.image ? (
-              <div className="relative h-32 w-32 overflow-hidden rounded-lg border shadow-sm group">
+              <div className="relative h-32 w-32 overflow-hidden rounded-lg border border-gray-300 shadow-sm group">
                 <img src={formData.image} alt="Preview" className="h-full w-full object-cover" />
                 <button
                   type="button"
@@ -291,19 +291,6 @@ export default function AdminProductsPage() {
                 <span className="text-xs font-medium text-gray-600">Add Image</span>
                 <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
               </label>
-            )}
-            
-            {/* Fallback URL Input */}
-            {!formData.image && (
-              <div className="flex-1 min-w-[200px]">
-                <p className="text-xs text-muted-foreground mb-2">or paste a URL</p>
-                <Input
-                  id="image"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="https://..."
-                />
-              </div>
             )}
           </div>
         </div>
@@ -335,7 +322,7 @@ export default function AdminProductsPage() {
         </div>
       </div>
 
-      <DialogFooter className="gap-2 pt-2 border-t mt-2">
+      <DialogFooter className="gap-2 pt-2 border-t border-gray-300 mt-2">
         <Button variant="ghost" onClick={() => setIsDialogOpen(false)}>
           Cancel
         </Button>

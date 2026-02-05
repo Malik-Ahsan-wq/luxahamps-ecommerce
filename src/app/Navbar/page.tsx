@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useCartStore } from '@/store/useCartStore'
 import { Badge } from '@/components/ui/badge'
 import AuthModal from '@/components/AuthModal'
+import AdminLoginModal from '@/components/AdminLoginModal'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
@@ -12,6 +13,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
   
   const { openCart, getCartItemsCount } = useCartStore();
   const cartCount = getCartItemsCount();
@@ -58,9 +60,12 @@ export default function Navbar() {
               <Link href="/gift-builder" className="text-sm font-medium text-pink-600 hover:text-pink-700 transition-colors flex items-center gap-1">
                 <Gift className="w-4 h-4" /> MAKE YOUR GIFT
               </Link>
-              <Link href="/admin" className="text-sm font-medium hover:text-pink-600 transition-colors flex items-center gap-1">
+              <button 
+                onClick={() => setIsAdminLoginOpen(true)}
+                className="text-sm font-medium hover:text-pink-600 transition-colors flex items-center gap-1"
+              >
                 <LayoutDashboard className="w-4 h-4" /> ADMIN
-              </Link>
+              </button>
             </div>
 
             {/* ICONS (ALWAYS VISIBLE) */}
@@ -104,7 +109,15 @@ export default function Navbar() {
               <Link href="/gift-builder" className="block text-lg font-medium text-pink-600 hover:text-pink-700 border-b pb-2 flex items-center gap-2" onClick={() => setOpen(false)}>
                 <Gift className="w-5 h-5" /> MAKE YOUR GIFT
               </Link>
-              <Link href="/admin" className="block text-lg font-medium hover:text-pink-600 border-b pb-2" onClick={() => setOpen(false)}>ADMIN</Link>
+              <button 
+                onClick={() => {
+                  setOpen(false);
+                  setIsAdminLoginOpen(true);
+                }}
+                className="block w-full text-left text-lg font-medium hover:text-pink-600 border-b pb-2"
+              >
+                ADMIN
+              </button>
              </div>
 
              <div className="pt-4">
@@ -140,6 +153,7 @@ export default function Navbar() {
       </div>
 
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      <AdminLoginModal isOpen={isAdminLoginOpen} onClose={() => setIsAdminLoginOpen(false)} />
     </>
   )
 }
