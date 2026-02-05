@@ -2,17 +2,20 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
-  role: 'user' | 'admin';
-  avatar?: string;
+  isAdmin: boolean;
+  token: string;
 }
 
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string, role?: 'user' | 'admin') => void;
+  isLoading: boolean;
+  error: string | null;
+  login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -21,18 +24,55 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       isAuthenticated: false,
-      login: (email, role = 'user') => {
-        // Simulate login
-        const user: User = {
-          id: Math.random().toString(36).substr(2, 9),
-          name: email.split('@')[0],
-          email,
-          role,
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
-        };
-        set({ user, isAuthenticated: true });
+      isLoading: false,
+      error: null,
+      login: async (email, password) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await fetch('http://localhost:5000/api/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || 'Login failed');
+          }
+
+          set({ user: data, isAuthenticated: true, isLoading: false });
+        } catch (error: any) {
+          set({ error: error.message, isLoading: false });
+          throw error;
+        }
       },
-      logout: () => set({ user: null, isAuthenticated: false }),
+      register: async (name, email, password) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await fetch('http://localhost:5000/api/auth/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, email, password }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || 'Registration failed');
+          }
+
+          set({ user: data, isAuthenticated: true, isLoading: false });
+        } catch (error: any) {
+          set({ error: error.message, isLoading: false });
+          throw error;
+        }
+      },
+      logout: () => set({ user: null, isAuthenticated: false, error: null }),
     }),
     {
       name: 'auth-storage',

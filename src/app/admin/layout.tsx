@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -15,21 +15,33 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, login, logout, isAuthenticated } = useAuthStore();
+  const { user, logout, isAuthenticated } = useAuthStore();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Simple Admin Guard
   useEffect(() => {
-    // If not authenticated or not admin, redirect or show login
-    // For this demo, we'll just show a login button if not auth
-  }, [isAuthenticated, user]);
+    if (isClient) {
+      if (!isAuthenticated || !user?.isAdmin) {
+        router.push("/");
+      }
+    }
+  }, [isAuthenticated, user, router, isClient]);
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (!isClient) {
+    return null; // or a loading spinner
+  }
+
+  if (!isAuthenticated || !user?.isAdmin) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold">Admin Access Required</h1>
-        <p className="text-muted-foreground">Please login as an admin to view this dashboard.</p>
-        <Button onClick={() => login("admin@example.com", "admin")}>
-          Simulate Admin Login
+        <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
+        <p className="text-muted-foreground">You do not have permission to view this page.</p>
+        <Button onClick={() => router.push("/")}>
+          Return to Home
         </Button>
       </div>
     );

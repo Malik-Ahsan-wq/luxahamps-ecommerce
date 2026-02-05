@@ -19,35 +19,37 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
   
-  const { login, logout, isAuthenticated, user } = useAuthStore();
+  const { login, register, logout, isAuthenticated, user, isLoading, error } = useAuthStore();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    login(email);
-    setLoading(false);
-    onClose();
-    // Reset form
-    setEmail("");
-    setPassword("");
-    setName("");
     
-    // If admin email (for demo), redirect to admin
-    if (email.includes("admin")) {
-        router.push("/admin");
+    try {
+      if (mode === 'login') {
+        await login(email, password);
+      } else {
+        await register(name, email, password);
+      }
+      
+      onClose();
+      // Reset form
+      setEmail("");
+      setPassword("");
+      setName("");
+      
+      // Redirect if needed (handled by store state update usually, but explicit redirect for admin is good)
+      // Note: user object might not be updated immediately in the component scope if relying on closure
+      // but store state will update.
+      
+    } catch (err) {
+      // Error is handled in store and displayed via state
     }
   };
 
   const toggleMode = () => {
     setMode(mode === "login" ? "signup" : "login");
-    // Clear errors or reset fields if needed
   };
 
   if (isAuthenticated && user) {
@@ -59,25 +61,23 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           </DialogHeader>
           <div className="flex flex-col items-center gap-6 py-6">
             <div className="h-20 w-20 rounded-full bg-pink-50 border-2 border-pink-100 flex items-center justify-center">
-                {user.avatar ? (
-                    <img src={user.avatar} alt={user.name} className="h-full w-full rounded-full object-cover" />
-                ) : (
-                    <span className="text-3xl font-bold text-pink-600">
-                        {user.name.charAt(0).toUpperCase()}
-                    </span>
-                )}
+               <span className="text-3xl font-bold text-pink-600">
+                   {user.name.charAt(0).toUpperCase()}
+               </span>
             </div>
             
             <div className="text-center space-y-1">
               <h3 className="font-bold text-xl">{user.name}</h3>
               <p className="text-muted-foreground">{user.email}</p>
-              <span className="inline-block px-2 py-0.5 rounded-full bg-gray-100 text-xs font-medium uppercase tracking-wider text-gray-600">
-                {user.role}
-              </span>
+              {user.isAdmin && (
+                <span className="inline-block px-2 py-0.5 rounded-full bg-pink-100 text-xs font-medium uppercase tracking-wider text-pink-600">
+                  Admin
+                </span>
+              )}
             </div>
 
             <div className="w-full space-y-3">
-                {user.role === 'admin' && (
+                {user.isAdmin && (
                     <Button 
                         variant="outline" 
                         className="w-full justify-start" 
@@ -107,6 +107,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     onClick={() => {
                         logout();
                         onClose();
+                        router.push('/');
                     }}
                 >
                     <LogOut className="mr-2 h-4 w-4" /> Sign Out
@@ -133,6 +134,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          {error && (
+            <div className="bg-red-50 text-red-500 text-sm p-3 rounded-md text-center">
+              {error}
+            </div>
+          )}
+          
           {mode === "signup" && (
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
@@ -170,8 +177,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             />
           </div>
 
-          <Button type="submit" className="w-full bg-pink-600 hover:bg-pink-700" disabled={loading}>
-            {loading ? "Processing..." : (mode === "login" ? "Sign In" : "Sign Up")}
+          <Button type="submit" className="w-full bg-pink-600 hover:bg-pink-700" disabled={isLoading}>
+            {isLoading ? "Processing..." : (mode === "login" ? "Sign In" : "Sign Up")}
           </Button>
         </form>
 
