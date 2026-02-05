@@ -6,6 +6,8 @@ export interface Product {
   name: string;
   price: number;
   image: string;
+  category: string
+
   // Optional gift bundle properties
   isGift?: boolean;
   giftItems?: { product: Product; quantity: number }[];
