@@ -59,11 +59,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 });
               }
             }}
-            className="p-2 bg-white rounded-full shadow-md hover:bg-black hover:text-white transition-colors relative z-30"
+            className="p-2 bg-white rounded-full shadow-sm hover:bg-black hover:text-white transition-colors relative z-30"
           >
             <Search size={14} />
           </button>
-          <button className="p-2 bg-white rounded-full shadow-md hover:bg-black hover:text-white transition-colors relative z-30">
+          <button className="p-2 bg-white rounded-full shadow-sm hover:bg-black hover:text-white transition-colors relative z-30">
             <Heart size={14} />
           </button>
         </div>

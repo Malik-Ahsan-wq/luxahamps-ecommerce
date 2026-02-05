@@ -49,7 +49,7 @@ export default function ProductsPage() {
   return (
     <div className="bg-gray-50/50 min-h-screen">
       {/* Header Banner */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-gray-300">
         <div className="container mx-auto px-4 py-8 md:py-12">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 text-center md:text-left">
             Shop Our Collection
@@ -166,7 +166,7 @@ export default function ProductsPage() {
 
           {/* Desktop Sidebar Filters */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-24 shadow-sm">
+            <div className="bg-white rounded-xl border border-gray-300 p-6 sticky top-24 shadow-sm">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold flex items-center gap-2">
                   <Filter className="h-4 w-4" /> Filters
@@ -258,14 +258,14 @@ export default function ProductsPage() {
           {/* Main Content */}
           <div className="flex-1">
             {/* Top Bar */}
-            <div className="hidden lg:flex items-center justify-between mb-6 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div className="hidden lg:flex items-center justify-between mb-6 bg-white p-4 rounded-xl border border-gray-300 shadow-sm">
               <div className="relative w-full max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 border-gray-200 bg-gray-50 focus:bg-white transition-colors"
+                  className="pl-9 border-gray-300 bg-gray-50 focus:bg-white transition-colors"
                 />
               </div>
 

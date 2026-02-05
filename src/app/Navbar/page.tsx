@@ -57,7 +57,7 @@ export default function Navbar() {
             <div className="hidden md:flex items-center space-x-8">
               <Link href="/" className="text-sm font-medium hover:text-pink-600 transition-colors">HOME</Link>
               <Link href="/products" className="text-sm font-medium hover:text-pink-600 transition-colors">SHOP</Link>
-              <Link href="/gift-builder" className="text-sm font-medium text-pink-600 hover:text-pink-700 transition-colors flex items-center gap-1">
+              <Link href="/gift-builder" className="text-sm font-medium bg-pink-600 p-2 rounded text-white hover:bg-pink-700 transition-colors flex items-center gap-1">
                 <Gift className="w-4 h-4" /> MAKE YOUR GIFT
               </Link>
               <button 
