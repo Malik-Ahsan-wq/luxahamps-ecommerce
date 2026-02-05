@@ -12,7 +12,7 @@ const ProductSection = () => {
   const openQuickView = useQuickViewStore((state) => state.openQuickView);
 
   // Take only first 8 products
-  const displayProducts = products.slice(0, 8);
+  const displayProducts = products.slice(0, 12);
 
   return (
     <div className="max-w-7xl mx-auto px-2 md:px-4 py-12">
@@ -80,7 +80,8 @@ const ProductSection = () => {
                         id: product.id,
                         name: product.name,
                         price: product.price,
-                        image: product.image
+                        image: product.image,
+                        category: product.category   // REQUIRED
                       }}
                       className="w-full rounded-none bg-black/80 md:bg-black py-2 md:py-3 text-[10px] md:text-sm font-bold uppercase tracking-widest hover:bg-pink-600 transition-colors"
                     />
@@ -99,10 +100,13 @@ const ProductSection = () => {
                 </div>
               </div>
             </div>
+            
           );
         })}
       </div>
+      
     </div>
+    
   );
 };
 

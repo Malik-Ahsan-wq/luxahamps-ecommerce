@@ -15,6 +15,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Search, Filter, X, Grid, List } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import BrandSlider from "../BrandSlider/page";
 
 export default function ProductsPage() {
   const {
@@ -321,6 +322,7 @@ export default function ProductsPage() {
           </div>
         </div>
       </div>
+      <BrandSlider/>
     </div>
   );
 }

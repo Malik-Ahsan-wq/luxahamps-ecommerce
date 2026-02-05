@@ -53,6 +53,7 @@ const initialProducts: Product[] = [
     inStock: true,
     description: "A perfect gift for her."
   },
+  
   {
     id: '2',
     name: "PREMIUM GIFT HAMPER",
@@ -129,7 +130,13 @@ const initialProducts: Product[] = [
     sizes: [],
     inStock: true,
     description: "Wellness delight for a healthy lifestyle."
-  }
+  },
+
+  
+
+
+  
+   
 ];
 
 export const useProductStore = create<ProductState>()(

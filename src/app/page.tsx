@@ -5,6 +5,7 @@ import OurPromise from "./PromiseSection/page";
 import ProductSection from "./ProductSection/page";
 import HappinessSection from "./HappinessSection/page";
 import ValentineSection from "./ValentineSection/page";
+import BrandSlider from "./BrandSlider/page";
 import VoicePage from "./VoiceSection/page";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
       <HappinessSection/>
       <ValentineSection/>
       <VoicePage/>
+      <BrandSlider/>
     </div>
   );
 }

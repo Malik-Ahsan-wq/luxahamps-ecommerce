@@ -103,11 +103,13 @@ export default function GiftBuilderPage() {
       isGift: true,
       giftItems: selectedProductsList.map(item => ({
         product: item.product as Product,
-        quantity: item.quantity
+        quantity: item.quantity,
       })),
       giftMessage,
       recipientName,
-      occasion
+      occasion,
+      category: "Gift Box"
+
     };
 
     addToCart(giftBundle);

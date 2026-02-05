@@ -55,7 +55,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   price: product.price,
                   oldPrice: oldPrice,
                   image: product.image,
-                  discount: discount
+                  discount: discount,
                 });
               }
             }}
@@ -84,7 +84,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   id: product.id,
                   name: product.name,
                   price: product.price,
-                  image: product.image
+                  image: product.image,
+                  category: product.category,
                 }}
                 className="w-full rounded-none bg-black/80 md:bg-black py-2 md:py-3 text-[10px] md:text-sm font-bold uppercase tracking-widest hover:bg-pink-600 transition-colors"
               />
