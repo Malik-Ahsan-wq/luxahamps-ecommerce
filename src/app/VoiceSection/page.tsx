@@ -1,48 +1,166 @@
 "use client";
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Autoplay, FreeMode } from 'swiper/modules';
+import { Navigation, Autoplay } from 'swiper/modules';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
-import 'swiper/css/free-mode';
 
 const VoicePage = () => {
-  const reviews = [
-    { id: 1, img: "/assets/dxw57hi0ldbzlhnicrma.webp", name: "Wesley Barker", text: "Fast delivery and premium packaging. Will definitely buy again." },
-    { id: 2, img: "/assets/Hc869a243ea6e44ea9d83a7c9bdfd11be9.avif", name: "Jane Doe", text: "Incredible service and attention to detail!" },
-    { id: 3, img: "/assets/kbuhajqunbgk3ubwtney.webp", name: "Alex Smith", text: "The website is super fast and easy to use." },
-    { id: 4, img: "/assets/dxw57hi0ldbzlhnicrma.webp", name: "Wesley Barker", text: "Fast delivery and premium packaging. Will definitely buy again." },
-    { id: 5, img: "/assets/Hc869a243ea6e44ea9d83a7c9bdfd11be9.avif", name: "Jane Doe", text: "Incredible service and attention to detail!" },
-    { id: 6, img: "/assets/kbuhajqunbgk3ubwtney.webp", name: "Alex Smith", text: "The website is super fast and easy to use." },
-    { id: 7, img: "/assets/dxw57hi0ldbzlhnicrma.webp", name: "Wesley Barker", text: "Fast delivery and premium packaging. Will definitely buy again." },
-  ];
+  // Memoize reviews data
+  const reviews = useMemo(() => [
+    { 
+      id: 1, 
+      img: "/assets/dxw57hi0ldbzlhnicrma.webp", 
+      name: "Wesley Barker", 
+      text: "Fast delivery and premium packaging. Will definitely buy again.",
+      rating: 5
+    },
+    { 
+      id: 2, 
+      img: "/assets/Hc869a243ea6e44ea9d83a7c9bdfd11be9.avif", 
+      name: "Jane Doe", 
+      text: "Incredible service and attention to detail!",
+      rating: 5
+    },
+    { 
+      id: 3, 
+      img: "/assets/kbuhajqunbgk3ubwtney.webp", 
+      name: "Basit", 
+      text: "Fast delivery and premium packaging. Will definitely buy again.I Create This Website And its super fast",
+      rating: 3
+    },
+    { 
+      id: 4, 
+      img: "/assets/dxw57hi0ldbzlhnicrma.webp", 
+      name: "Michael Chen", 
+      text: "Outstanding quality and customer support. Highly recommended!",
+      rating: 5
+    },
+    { 
+      id: 5, 
+      img: "/assets/Hc869a243ea6e44ea9d83a7c9bdfd11be9.avif", 
+      name: "Malik Ahsan", 
+      text: "Professional service from start to finish. Five stars!",
+      rating: 5
+    },
+    { 
+      id: 6, 
+      img: "/assets/kbuhajqunbgk3ubwtney.webp", 
+      name: "Malik Haroon Ahmed", 
+      text: "Best shopping experience I've had online. Will be back!",
+      rating: 4
+    },
+    { 
+      id: 7, 
+      img: "/assets/dxw57hi0ldbzlhnicrma.webp", 
+      name: "Rana Haroon Khan", 
+      text: "Exceeded all expectations. Truly remarkable service!",
+      rating: 5
+    },
+  ], []);
 
-  const brands = [
-    "ROLEX", "GUCCI", "PRADA", "DIOR", "CHANEL", "HERMÈS", "ZARA", "ADIDAS", "NIKE"
-  ];
+  const brands = useMemo(() => [
+    "ROLEX", "GUCCI", "PRADA", "DIOR", "CHANEL", 
+    "HERMÈS", "ZARA", "ADIDAS", "NIKE"
+  ], []);
 
   return (
-    <section className="py-16 bg-white overflow-hidden">
+    <section className="py-12 md:py-16 lg:py-20 bg-white overflow-hidden">
       <style jsx global>{`
-        @media (max-width: 768px) {
-          .swiper-button-next, .swiper-button-prev { display: none !important; }
+        /* Navigation Buttons */
+        .testimonial-swiper .swiper-button-next,
+        .testimonial-swiper .swiper-button-prev {
+          color: #000;
+          width: 25px;
+          height: 25px;
+          background: transparent;
+          padding: 4px;
+          border-radius: 50%;
+          transition: all 0.3s ease;
         }
-        .swiper-button-next, .swiper-button-prev { color: black; transform: scale(0.7); }
-        
-        /* Smooth Linear Motion for Brands */
+
+        .testimonial-swiper .swiper-button-next:after,
+        .testimonial-swiper .swiper-button-prev:after {
+          font-size: 28px;
+          font-weight: bold;
+        }
+
+        .testimonial-swiper .swiper-button-next:hover,
+        .testimonial-swiper .swiper-button-prev:hover {
+          transform: scale(1.2);
+        }
+
+        /* Hide navigation on mobile */
+        @media (max-width: 768px) {
+          .testimonial-swiper .swiper-button-next,
+          .testimonial-swiper .swiper-button-prev {
+            display: none !important;
+          }
+        }
+
+        /* Swiper Slide Transitions */
+        .testimonial-swiper .swiper-slide {
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          opacity: 0.5;
+          transform: scale(0.85);
+        }
+
+        .testimonial-swiper .swiper-slide-active {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        /* Ensure smooth scaling */
+        .testimonial-swiper .swiper-wrapper {
+          align-items: center;
+        }
+
+        /* Star styling */
+        .star-filled {
+          color: #fbbf24;
+        }
+
+        .star-empty {
+          color: #e5e7eb;
+        }
+
+        /* Smooth image transitions */
+        .testimonial-image {
+          transition: transform 0.3s ease;
+        }
+
+        .testimonial-image:hover {
+          transform: scale(1.05);
+        }
+
+        /* Brand Slider */
         .brand-swiper .swiper-wrapper {
           transition-timing-function: linear !important;
         }
+
+        .brand-swiper {
+          user-select: none;
+        }
+
+        .brand-text {
+          transition: opacity 0.3s ease;
+        }
+
+        .brand-text:hover {
+          opacity: 0.7;
+        }
       `}</style>
 
-      {/* --- Testimonial Section --- */}
-      <div className="container py-10 mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 tracking-widest uppercase">
-          Voices of Praise
+      {/* Testimonials Section */}
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
+        {/* Header */}
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-10 md:mb-14 lg:mb-16 tracking-[0.2em] uppercase">
+          VOICES OF PRAISE
         </h2>
 
+        {/* Swiper Carousel */}
         <Swiper
           modules={[Navigation, Autoplay]}
           spaceBetween={30}
@@ -50,54 +168,109 @@ const VoicePage = () => {
           centeredSlides={true}
           loop={true}
           navigation={true}
-          autoplay={{ delay: 3000 }}
-          breakpoints={{
-            640: { slidesPerView: 3, spaceBetween: 40 },
-            1024: { slidesPerView: 5, spaceBetween: 50 },
+          grabCursor={true}
+          autoplay={{ 
+            delay: 4000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true
           }}
-          className="testimonial-swiper !pb-10"
+          speed={600}
+          breakpoints={{
+            480: { 
+              slidesPerView: 1.5,
+              spaceBetween: 20
+            },
+            640: { 
+              slidesPerView: 2.2,
+              spaceBetween: 25
+            },
+            768: { 
+              slidesPerView: 2.5,
+              spaceBetween: 30
+            },
+            1024: { 
+              slidesPerView: 3.5,
+              spaceBetween: 35
+            },
+            1280: { 
+              slidesPerView: 4.2,
+              spaceBetween: 40
+            },
+            1536: { 
+              slidesPerView: 5,
+              spaceBetween: 45
+            },
+          }}
+          className="testimonial-swiper !pb-4 md:!pb-6"
         >
           {reviews.map((review) => (
-            <SwiperSlide key={review.id} className="flex flex-col items-center">
-              {({ isActive }) => (
-                <div className={`transition-all duration-500 flex flex-col items-center ${isActive ? 'scale-105 opacity-100' : 'scale-90 opacity-40'}`}>
-                  <div className="w-48 h-48 md:w-56 md:h-56 rounded-3xl overflow-hidden shadow-lg mb-6 mt-10">
-                    <img src={review.img} alt={review.name} className="w-full h-full object-cover" />
-                  </div>
-                  <div className={`text-center transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
-                    <div className="flex justify-center text-yellow-400 text-xl mb-4">★★★★★</div>
-                    <p className="max-w-md mx-auto text-gray-700 italic mb-4 px-1">"{review.text}"</p>
-                    <h3 className="text-xl mb-10 font-bold italic border-b-2 border-black inline-block pb-1">{review.name}</h3>
-                  </div>
+            <SwiperSlide key={review.id}>
+              <div className="flex flex-col items-center">
+                {/* Image with rounded corners */}
+                <div className="w-full aspect-square max-w-[280px] md:max-w-[200px] rounded-[28px] md:rounded-[36px] overflow-hidden shadow-lg mb-6 md:mb-8 bg-gray-100">
+                  <img 
+                    src={review.img} 
+                    alt={`${review.name}'s testimonial`}
+                    className="testimonial-image w-full h-full object-cover"
+                    loading="lazy"
+                  />
                 </div>
-              )}
+
+                {/* Rating Stars */}
+                <div className="flex justify-center gap-1 text-2xl md:text-3xl mb-4 md:mb-5">
+                  {[...Array(5)].map((_, i) => (
+                    <span 
+                      key={i} 
+                      className={i < review.rating ? 'star-filled' : 'star-empty'}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+
+                {/* Review Text */}
+                <p className="text-sm md:text-base text-gray-700 text-center max-w-sm mx-auto mb-4 md:mb-5 px-4 leading-relaxed">
+                  {review.text}
+                </p>
+
+                {/* Author Name */}
+                <h3 className="text-lg md:text-xl font-bold italic text-gray-900">
+                  {review.name}
+                </h3>
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
 
-      {/* --- Continuous Brand Slider --- */}
-      <div className="border-t border-b border-black py-6 mt-10">
+      {/* Brand Slider Section */}
+      <div className="mt-16 md:mt-20 lg:mt-24 border-t border-b border-gray-300 bg-white py-6 md:py-8">
         <Swiper
-          modules={[Autoplay, FreeMode]}
-          slidesPerView={2}
-          spaceBetween={30}
+          modules={[Autoplay]}
+          slidesPerView="auto"
+          spaceBetween={40}
           loop={true}
-          freeMode={true}
-          speed={5000} // Speed of the transition (higher = slower/smoother)
+          speed={8000}
           autoplay={{
             delay: 0,
             disableOnInteraction: false,
           }}
+          allowTouchMove={false}
           breakpoints={{
-            640: { slidesPerView: 4 },
-            1024: { slidesPerView: 6 },
+            320: { spaceBetween: 30 },
+            640: { spaceBetween: 50 },
+            1024: { spaceBetween: 80 },
           }}
           className="brand-swiper"
         >
-          {brands.map((brand, index) => (
-            <SwiperSlide key={index} className="flex justify-center items-center">
-              <span className="text-black font-bold text-lg md:text-xl tracking-widest uppercase hover:text-black transition-colors cursor-default">
+          {[...brands, ...brands, ...brands].map((brand, index) => (
+            <SwiperSlide 
+              key={`${brand}-${index}`} 
+              className="!w-auto"
+            >
+              <span 
+                className="brand-text text-black font-bold text-base md:text-lg lg:text-xl tracking-[0.25em] uppercase cursor-default inline-block px-4"
+              >
                 {brand}
               </span>
             </SwiperSlide>

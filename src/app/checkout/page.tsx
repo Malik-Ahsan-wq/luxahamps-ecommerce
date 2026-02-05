@@ -142,37 +142,37 @@ export default function CheckoutPage() {
                 <h2 className="text-xl font-semibold">Shipping Information</h2>
               </div>
               
-              <Card className="border-muted-foreground/10 shadow-sm">
+              <Card className="border-gray-300 shadow-sm">
                 <CardContent className="grid gap-6 p-6">
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" name="name" required placeholder="John Doe" value={formData.name} onChange={handleInputChange} className="h-11" />
+                    <Input id="name" name="name" required placeholder="John Doe" value={formData.name} onChange={handleInputChange} className="h-11 border-gray-300 shadow-sm" />
                   </div>
                   
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
+                  <div className="grid  grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="space-y-2 ">
                       <Label htmlFor="email">Email Address</Label>
-                      <Input id="email" name="email" type="email" required placeholder="john@example.com" value={formData.email} onChange={handleInputChange} className="h-11" />
+                      <Input  id="email" name="email" type="email" required placeholder="john@example.com" value={formData.email} onChange={handleInputChange} className="h-11 border-gray-300 shadow-sm" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone Number</Label>
-                      <Input id="phone" name="phone" type="tel" required placeholder="+1 (555) 000-0000" value={formData.phone} onChange={handleInputChange} className="h-11" />
+                      <Input id="phone" name="phone" type="tel" required placeholder="+1 (555) 000-0000" value={formData.phone} onChange={handleInputChange} className="h-11 border-gray-300 shadow-sm" />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="address">Street Address</Label>
-                    <Input id="address" name="address" required placeholder="123 Main St, Apt 4B" value={formData.address} onChange={handleInputChange} className="h-11" />
+                    <Input id="address" name="address" required placeholder="123 Main St, Apt 4B" value={formData.address} onChange={handleInputChange} className="h-11 border-gray-300 shadow-sm" />
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="city">City</Label>
-                      <Input id="city" name="city" required placeholder="New York" value={formData.city} onChange={handleInputChange} className="h-11" />
+                      <Input id="city" name="city" required placeholder="New York" value={formData.city} onChange={handleInputChange} className="h-11 border-gray-300 shadow-sm" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="postalCode">Postal Code</Label>
-                      <Input id="postalCode" name="postalCode" required placeholder="10001" value={formData.postalCode} onChange={handleInputChange} className="h-11" />
+                      <Input id="postalCode" name="postalCode" required placeholder="10001" value={formData.postalCode} onChange={handleInputChange} className="h-11 border-gray-300 shadow-sm" />
                     </div>
                   </div>
                 </CardContent>
@@ -247,7 +247,7 @@ export default function CheckoutPage() {
               </CardContent>
               <CardFooter className="bg-muted/30 p-6">
                 <Button 
-                  className="w-full py-6 text-lg font-bold shadow-md transition-all active:scale-[0.98]" 
+                  className="w-full py-6 text-lg font-bold shadow-md bg-pink-500 hover:bg-pink-400 transition-all active:scale-[0.98]" 
                   size="lg" 
                   type="submit" 
                   form="checkout-form"
