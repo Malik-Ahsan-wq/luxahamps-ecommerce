@@ -32,7 +32,7 @@ export default function OrdersPage() {
   // We match by userId if available, or fallback to email match
   const userOrders = orders.filter(
     (order) => 
-      (user?.id && order.userId === user.id) || 
+      (user?._id && order.userId === user._id) || 
       (user?.email && order.customer.email === user.email)
   );
 

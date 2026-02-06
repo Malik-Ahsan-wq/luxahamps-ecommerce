@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/useAuthStore";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Package, ShoppingCart, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -14,38 +13,6 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { user, logout, isAuthenticated } = useAuthStore();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  // Simple Admin Guard
-  useEffect(() => {
-    if (isClient) {
-      if (!isAuthenticated || !user?.isAdmin) {
-        router.push("/");
-      }
-    }
-  }, [isAuthenticated, user, router, isClient]);
-
-  if (!isClient) {
-    return null; // or a loading spinner
-  }
-
-  if (!isAuthenticated || !user?.isAdmin) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
-        <p className="text-muted-foreground">You do not have permission to view this page.</p>
-        <Button onClick={() => router.push("/")}>
-          Return to Home
-        </Button>
-      </div>
-    );
-  }
 
   const sidebarItems = [
     {
@@ -116,19 +83,17 @@ export default function AdminLayout({
 
       {/* User / Bottom Section */}
       <div className="border-t border-slate-100 pt-4 px-2">
-        <Button
-          variant="ghost"
-          className="w-full justify-start gap-3 rounded-xl px-4 py-6 text-sm font-bold text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-all group"
-          onClick={() => {
-            logout();
-            router.push("/");
-          }}
-        >
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 group-hover:bg-rose-100 transition-colors">
-            <LogOut className="h-4 w-4" />
-          </div>
-          Logout Session
-        </Button>
+        <Link href="/" className="w-full">
+          <Button
+            variant="ghost"
+            className="w-full justify-start gap-3 rounded-xl px-4 py-6 text-sm font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all group"
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 group-hover:bg-slate-200 transition-colors">
+              <LogOut className="h-4 w-4" />
+            </div>
+            Back to Home
+          </Button>
+        </Link>
       </div>
     </div>
   </aside>

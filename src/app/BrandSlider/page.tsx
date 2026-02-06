@@ -12,6 +12,7 @@ const BrandSlider = () => {
     "HERMÈS", "ZARA", "ADIDAS", "NIKE"
   ], []);
 
+  const loopEnabled = brands.length > 3;
   return (
     <div className="relative mt-16 md:mt-24 py-10 bg-white">
       {/* Visual Accents: Top and Bottom Decorative Lines */}
@@ -27,7 +28,8 @@ const BrandSlider = () => {
         slidesPerView="auto"
         centeredSlides={true}
         spaceBetween={60}
-        loop={true}
+        loop={loopEnabled}
+        watchOverflow={true}
         speed={10000} // Ultra slow for luxury feel
         autoplay={{
           delay: 0,

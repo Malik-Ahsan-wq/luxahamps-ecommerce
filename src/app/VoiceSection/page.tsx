@@ -63,6 +63,7 @@ const VoicePage = () => {
 
  
 
+  const loopEnabled = reviews.length > 6;
   return (
     <section className="py-12 md:py-16 lg:py-20 bg-white overflow-hidden">
       <style jsx global>{`
@@ -178,7 +179,8 @@ const VoicePage = () => {
           spaceBetween={30}
           slidesPerView={1.2}
           centeredSlides={true}
-          loop={true}
+          loop={loopEnabled}
+          watchOverflow={true}
           navigation={true}
           grabCursor={true}
           autoplay={{ 

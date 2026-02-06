@@ -62,7 +62,7 @@ export default function CheckoutPage() {
 
     const newOrder = {
       id: Math.random().toString(36).substr(2, 9).toUpperCase(),
-      userId: user?.id,
+      userId: user?._id,
       customer: formData,
       items: cart,
       total: getCartTotal(),

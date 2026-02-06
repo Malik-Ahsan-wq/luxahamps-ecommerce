@@ -4,14 +4,11 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useCartStore } from '@/store/useCartStore'
 import { Badge } from '@/components/ui/badge'
-import AuthModal from '@/components/AuthModal'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   
   const { openCart, getCartItemsCount } = useCartStore();
   const cartCount = getCartItemsCount();
@@ -127,10 +124,9 @@ www.ahsanmalik.xyz            </span>
                 className="w-5 h-5 cursor-pointer"
                 onClick={() => setSearchOpen(true)}
               />
-              
-              <div onClick={() => setIsAuthModalOpen(true)}>
+              <Link href="/admin">
                 <User className="w-5 h-5 cursor-pointer hover:text-pink-600" />
-              </div>
+              </Link>
               
               {/* <Heart className="w-5 h-5 cursor-pointer hover:text-pink-600" /> */}
               
@@ -165,15 +161,13 @@ www.ahsanmalik.xyz            </span>
              </div>
 
              <div className="pt-4">
-                <button 
-                  onClick={() => {
-                    setOpen(false);
-                    setIsAuthModalOpen(true);
-                  }}
-                  className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-md py-3 text-gray-700 hover:bg-gray-50 mb-4"
-                >
-                  <User className="w-5 h-5" /> Login / Sign Up
-                </button>
+               <Link 
+                 href="/admin"
+                 onClick={() => setOpen(false)}
+                 className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-md py-3 text-gray-700 hover:bg-gray-50 mb-4"
+               >
+                 <User className="w-5 h-5" /> Admin Panel
+               </Link>
                 
                 <Link 
                   href="/gift-builder"
@@ -195,8 +189,6 @@ www.ahsanmalik.xyz            </span>
          <input type="text" placeholder="Search..." className="flex-1 outline-none text-lg" autoFocus={searchOpen} />
          <X className="w-6 h-6 cursor-pointer hover:text-red-500" onClick={() => setSearchOpen(false)} />
       </div>
-
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </>
   )
 }

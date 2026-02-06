@@ -29,7 +29,8 @@ export const useAuthStore = create<AuthState>()(
       login: async (email, password) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await fetch('http://localhost:5000/api/auth/login', {
+          const base = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5000';
+          const response = await fetch(`${base}/api/auth/login`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -52,7 +53,8 @@ export const useAuthStore = create<AuthState>()(
       register: async (name, email, password) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await fetch('http://localhost:5000/api/auth/register', {
+          const base = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5000';
+          const response = await fetch(`${base}/api/auth/register`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

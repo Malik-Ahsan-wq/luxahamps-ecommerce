@@ -19,13 +19,31 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [localError, setLocalError] = useState<string | null>(null);
   
   const { login, register, logout, isAuthenticated, user, isLoading, error } = useAuthStore();
   const router = useRouter();
 
+  const isEmailValid = (val: string) => /\S+@\S+\.\S+/.test(val);
+  const isPasswordValid = (val: string) => val.length >= 6;
+  const canSubmit =
+    mode === "login"
+      ? isEmailValid(email) && isPasswordValid(password)
+      : name.trim().length > 1 && isEmailValid(email) && isPasswordValid(password);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    setLocalError(null);
+    if (!canSubmit) {
+      setLocalError(
+        mode === "login"
+          ? "Please enter a valid email and a password of at least 6 characters."
+          : "Please provide your name, a valid email, and a password of at least 6 characters."
+      );
+      return;
+    }
+
     try {
       if (mode === 'login') {
         await login(email, password);
@@ -134,6 +152,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          {localError && (
+            <div className="bg-red-50 text-red-500 text-sm p-3 rounded-md text-center">
+              {localError}
+            </div>
+          )}
           {error && (
             <div className="bg-red-50 text-red-500 text-sm p-3 rounded-md text-center">
               {error}
@@ -177,7 +200,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             />
           </div>
 
-          <Button type="submit" className="w-full bg-pink-600 hover:bg-pink-700" disabled={isLoading}>
+          <Button type="submit" className="w-full bg-pink-600 hover:bg-pink-700 disabled:opacity-60" disabled={isLoading || !canSubmit}>
             {isLoading ? "Processing..." : (mode === "login" ? "Sign In" : "Sign Up")}
           </Button>
         </form>

@@ -35,6 +35,7 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
       name: product.name,
       price: product.price,
       image: product.image,
+      category: (product as any).category || "",
     });
     router.push("/checkout");
   };
@@ -133,7 +134,8 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
                 id: product.id.toString(),
                 name: product.name,
                 price: product.price,
-                image: product.image
+                image: product.image,
+                category: (product as any).category || "",
             }}
             variant="outline"
             className="w-full rounded-none border-black py-4 text-sm font-bold uppercase tracking-widest hover:bg-black hover:text-white"
