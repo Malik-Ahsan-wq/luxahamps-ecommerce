@@ -23,17 +23,78 @@ export default function Navbar() {
   return (
     <>
       {/* TOP INFO BAR */}
-      <div className="hidden md:flex gap-10 bg-black text-white text-xs px-9 py-3 justify-between items-center ">
-        <div className="hidden md:block ">
-          Rated 4.9/5   <span className='mx-6'> •Free delivery over ₹2,500 </span>    •5–7 Days delivery •Use code <span className="font-semibold ml-8">LOVEH10</span>
-        </div>
+  <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee-infinite {
+          display: flex;
+          width: max-content;
+          animation: marquee 30s linear infinite;
+        }
+        .ticker-container:hover .animate-marquee-infinite {
+          animation-play-state: paused;
+        }
+      `}</style>
 
-        <div className="flex items-center gap-10">
-          <span className="hidden sm:block">Help & Support:</span>
-          <span>+91 805 888 9977</span>
-          <span className="hidden sm:block">support@luxahamp.com</span>
+      <div className="ticker-container md:block hidden relative w-full overflow-hidden bg-black text-white py-3 border-b border-white/10 select-none">
+        <div className="animate-marquee-infinite">
+          {/* First Loop */}
+          <div className="flex items-center gap-12 px-6">
+            <span className="text-[10px] md:text-xs font-bold tracking-widest text-slate-300 uppercase">
+              Rated 4.9/5 ★
+            </span>
+            <span className="h-1 w-1 rounded-full bg-blue-500" />
+            <span className="text-[10px] md:text-xs font-medium tracking-wide">
+              Free delivery over <span className="text-emerald-400 font-bold">₹2,500</span>
+            </span>
+            <span className="h-1 w-1 rounded-full bg-blue-500" />
+            <span className="text-[10px] md:text-xs font-medium tracking-wide">
+              5–7 Days delivery
+            </span>
+            <span className="h-1 w-1 rounded-full bg-blue-500" />
+            <span className="text-[10px] md:text-xs font-medium tracking-wide uppercase">
+              Use code: <span className="bg-white text-black px-2 py-0.5 rounded-sm ml-1 font-black">LOVEH10</span>
+            </span>
+            <span className="h-1 w-1 rounded-full bg-blue-500" />
+            <span className="text-[10px] md:text-xs font-medium tracking-wide">
+              Support: <span className="text-blue-400 font-bold">+91 805 888 9977</span>
+            </span>
+            <span className="h-1 w-1 rounded-full bg-blue-500" />
+            <span className="text-[10px] md:text-xs font-medium tracking-wide text-slate-300">
+              support@luxahamp.com
+            </span>
+          </div>
+
+          {/* Second Loop (Exact Duplicate for Seamless Transition) */}
+          <div className="flex items-center gap-12 px-6" aria-hidden="true">
+            <span className="text-[10px] md:text-xs font-bold tracking-widest text-slate-300 uppercase">
+              Rated 4.9/5 ★
+            </span>
+            <span className="h-1 w-1 rounded-full bg-blue-500" />
+            <span className="text-[10px] md:text-xs font-medium tracking-wide">
+              Free delivery over <span className="text-emerald-400 font-bold">₹2,500</span>
+            </span>
+            <span className="h-1 w-1 rounded-full bg-blue-500" />
+            <span className="text-[10px] md:text-xs font-medium tracking-wide">
+              5–7 Days delivery
+            </span>
+            <span className="h-1 w-1 rounded-full bg-blue-500" />
+            <span className="text-[10px] md:text-xs font-medium tracking-wide uppercase">
+              Use code: <span className="bg-white text-black px-2 py-0.5 rounded-sm ml-1 font-black">LOVEH10</span>
+            </span>
+            <span className="h-1 w-1 rounded-full bg-blue-500" />
+            <span className="text-[10px] md:text-xs font-medium tracking-wide">
+              Support: <span className="text-blue-400 font-bold">03276227156</span>
+            </span>
+            <span className="h-1 w-1 rounded-full bg-blue-500" />
+            <span className="text-[10px] md:text-xs font-medium tracking-wide text-slate-300">
+www.ahsanmalik.xyz            </span>
+          </div>
         </div>
       </div>
+   
 
       {/* MAIN NAVBAR */}
       <header className="shadow-sm sticky top-0 z-40 bg-white">
@@ -71,7 +132,7 @@ export default function Navbar() {
                 <User className="w-5 h-5 cursor-pointer hover:text-pink-600" />
               </div>
               
-              <Heart className="w-5 h-5 cursor-pointer hover:text-pink-600" />
+              {/* <Heart className="w-5 h-5 cursor-pointer hover:text-pink-600" /> */}
               
               <div className="relative cursor-pointer" onClick={openCart}>
                 <ShoppingCart className="w-5 h-5 hover:text-pink-600" />

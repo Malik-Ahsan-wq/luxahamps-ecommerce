@@ -153,9 +153,24 @@ const VoicePage = () => {
       {/* Testimonials Section */}
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
         {/* Header */}
-        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-10 md:mb-14 lg:mb-16 tracking-[0.2em] uppercase">
-          VOICES OF PRAISE
-        </h2>
+      <div className="flex flex-col items-center justify-center mb-12 md:mb-16 lg:mb-20 px-4">
+  {/* Eyebrow Heading */}
+  <span className="text-pink-600 text-[10px] md:text-xs font-black uppercase tracking-[0.5em] mb-4 block animate-fade-in">
+    Client Testimonials
+  </span>
+
+  {/* Main Heading - Refined Kerning and Gradient */}
+  <h2 className="relative text-3xl md:text-5xl lg:text-6xl font-black text-center tracking-tighter leading-none text-slate-900">
+    VOICES OF <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-rose-400">PRAISE</span>
+    
+    {/* Subtle Decorative Line - Underlines the brand quality */}
+    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3">
+      <div className="h-[1px] w-8 md:w-12 bg-slate-200" />
+      <div className="h-1.5 w-1.5 rounded-full bg-pink-500" />
+      <div className="h-[1px] w-8 md:w-12 bg-slate-200" />
+    </div>
+  </h2>
+</div>
 
         {/* Swiper Carousel */}
         <Swiper

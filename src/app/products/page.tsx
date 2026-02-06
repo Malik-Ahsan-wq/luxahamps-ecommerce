@@ -185,10 +185,10 @@ export default function ProductsPage() {
                     value={filters.category || "all"}
                     onValueChange={(val) => setFilter("category", val === "all" ? null : val)}
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full border-gray-300">
                       <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-blue-300 cursor-pointer">
                       <SelectItem value="all">All Categories</SelectItem>
                       {uniqueCategories.map((cat) => (
                         <SelectItem key={cat} value={cat}>{cat}</SelectItem>
@@ -204,10 +204,10 @@ export default function ProductsPage() {
                     value={filters.color || "all"}
                     onValueChange={(val) => setFilter("color", val === "all" ? null : val)}
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full border-gray-300">
                       <SelectValue placeholder="All Colors" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-blue-300 cursor-pointer">
                       <SelectItem value="all">All Colors</SelectItem>
                       {uniqueColors.map((c) => (
                         <SelectItem key={c} value={c}>{c}</SelectItem>
@@ -223,10 +223,10 @@ export default function ProductsPage() {
                     value={filters.size || "all"}
                     onValueChange={(val) => setFilter("size", val === "all" ? null : val)}
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full border-gray-300">
                       <SelectValue placeholder="All Sizes" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-blue-300 cursor-pointer">
                       <SelectItem value="all">All Sizes</SelectItem>
                       {uniqueSizes.map((s) => (
                         <SelectItem key={s} value={s}>{s}</SelectItem>
@@ -242,10 +242,10 @@ export default function ProductsPage() {
                     value={filters.inStock === null ? "all" : filters.inStock ? "in-stock" : "out-of-stock"}
                     onValueChange={(val) => setFilter("inStock", val === "all" ? null : val === "in-stock")}
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full border-gray-300">
                       <SelectValue placeholder="All Status" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-blue-300 cursor-pointer">
                       <SelectItem value="all">All Status</SelectItem>
                       <SelectItem value="in-stock">In Stock</SelectItem>
                       <SelectItem value="out-of-stock">Out of Stock</SelectItem>
@@ -271,8 +271,8 @@ export default function ProductsPage() {
               </div>
 
               <div className="flex items-center gap-4">
-                 <div className="text-sm text-gray-500">
-                    Showing <span className="font-bold text-gray-900">{filteredProducts.length}</span> results
+                 <div className=" ml-3 text-sm text-gray-500">
+ <span className="font-bold text-gray-900">{filteredProducts.length}</span> results
                  </div>
                  <div className="h-6 w-px bg-gray-200"></div>
                  <div className="flex items-center gap-2">
@@ -281,10 +281,10 @@ export default function ProductsPage() {
                     value={sortOption || "newest"}
                     onValueChange={(val: any) => setSortOption(val)}
                   >
-                    <SelectTrigger className="w-[180px] border-none shadow-none bg-transparent hover:bg-gray-50">
+                    <SelectTrigger className="w-[180px] border border-gray-300 shadow-none  hover:bg-gray-50">
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
-                    <SelectContent align="end">
+                    <SelectContent align="end" className="bg-blue-300 cursor-pointer">
                       <SelectItem value="newest">Newest Arrivals</SelectItem>
                       <SelectItem value="price-asc">Price: Low to High</SelectItem>
                       <SelectItem value="price-desc">Price: High to Low</SelectItem>
@@ -296,7 +296,7 @@ export default function ProductsPage() {
 
             {/* Product Grid */}
             {filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 md:gap-6">
+              <div className="grid md:w-3xl grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 md:gap-6">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}

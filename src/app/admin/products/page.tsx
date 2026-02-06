@@ -106,38 +106,41 @@ export default function AdminProductsPage() {
   };
 
   return (
-   <div className="container mx-auto max-w-7xl p-4 md:p-8 space-y-8">
+<div className="p-8 space-y-8 min-h-screen bg-[#f8fafc]">
   {/* Header Section */}
-  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-gray-300 pb-6">
+  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-8">
     <div>
-      <h1 className="text-3xl font-extrabold tracking-tight">Products</h1>
-      <p className="text-muted-foreground mt-1 text-sm">
+      <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">Products</h1>
+      <p className="text-slate-500 mt-1 font-medium">
         Manage your store inventory, pricing, and availability.
       </p>
     </div>
-    <Button onClick={() => handleOpenDialog()} className="w-full sm:w-auto shadow-sm">
-      <Plus className="mr-2 h-4 w-4" /> Add Product
+    <Button 
+      onClick={() => handleOpenDialog()} 
+      className="w-full sm:w-auto shadow-md bg-blue-600 hover:bg-blue-700 text-white transition-all active:scale-95"
+    >
+      <Plus className="mr-2 h-5 w-5" /> Add Product
     </Button>
   </div>
 
-  {/* Desktop Table View (Hidden on Mobile) */}
-  <div className="hidden md:block rounded-xl border border-gray-300 bg-card shadow-sm overflow-hidden">
+  {/* Desktop Table View */}
+  <div className="hidden md:block rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
     <Table>
-      <TableHeader className="bg-muted/50">
-        <TableRow>
-          <TableHead className="w-[80px]">Image</TableHead>
-          <TableHead>Name</TableHead>
-          <TableHead>Category</TableHead>
-          <TableHead>Price</TableHead>
-          <TableHead>Stock</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+      <TableHeader className="bg-slate-50/50">
+        <TableRow className="hover:bg-transparent">
+          <TableHead className="w-[100px] py-4 font-bold text-slate-600">Image</TableHead>
+          <TableHead className="font-bold text-slate-600">Name</TableHead>
+          <TableHead className="font-bold text-slate-600">Category</TableHead>
+          <TableHead className="font-bold text-slate-600">Price</TableHead>
+          <TableHead className="font-bold text-slate-600">Stock</TableHead>
+          <TableHead className="text-right font-bold text-slate-600 pr-8">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {products.map((product) => (
-          <TableRow key={product.id} className="hover:bg-muted/30 transition-colors">
-            <TableCell>
-              <div className="relative h-12 w-12 overflow-hidden rounded-lg border border-gray-300 bg-secondary">
+          <TableRow key={product.id} className="group hover:bg-blue-50/30 transition-colors">
+            <TableCell className="py-4">
+              <div className="relative h-14 w-14 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 shadow-sm transition-transform group-hover:scale-105">
                 <Image
                   src={product.image}
                   alt={product.name}
@@ -146,40 +149,41 @@ export default function AdminProductsPage() {
                 />
               </div>
             </TableCell>
-            <TableCell className="font-semibold">{product.name}</TableCell>
+            <TableCell className="font-bold text-slate-900 text-base">{product.name}</TableCell>
             <TableCell>
-              <span className="inline-flex items-center rounded-md bg-secondary px-2 py-1 text-xs font-medium text-secondary-foreground uppercase tracking-wider">
+              <span className="inline-flex items-center rounded-lg bg-indigo-50 px-2.5 py-1 text-[10px] font-bold text-indigo-700 uppercase tracking-widest border border-indigo-100">
                 {product.category}
               </span>
             </TableCell>
-            <TableCell className="font-medium text-primary">
-              {formatPrice(product.price)}
+            <TableCell className="font-heavy text-slate-900">
+              <span className="text-lg font-bold">{formatPrice(product.price)}</span>
             </TableCell>
             <TableCell>
               <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border ${
+                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold border ${
                   product.inStock
                     ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                    : "bg-red-50 text-red-700 border-red-200"
+                    : "bg-rose-50 text-rose-700 border-rose-200"
                 }`}
               >
+                <span className={`mr-1.5 h-1.5 w-1.5 rounded-full ${product.inStock ? "bg-emerald-500" : "bg-rose-500"}`} />
                 {product.inStock ? "In Stock" : "Out of Stock"}
               </span>
             </TableCell>
-            <TableCell className="text-right">
-              <div className="flex justify-end gap-1">
+            <TableCell className="text-right pr-8">
+              <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="icon"
                   onClick={() => handleOpenDialog(product)}
-                  className="hover:bg-primary/10"
+                  className="h-9 w-9 rounded-lg border-slate-200 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 shadow-sm"
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="icon"
-                  className="text-destructive hover:bg-destructive/10"
+                  className="h-9 w-9 rounded-lg border-slate-200 text-slate-400 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 shadow-sm"
                   onClick={() => handleDelete(product.id)}
                 >
                   <Trash2 className="h-4 w-4" />
@@ -192,34 +196,35 @@ export default function AdminProductsPage() {
     </Table>
   </div>
 
-  {/* Mobile Card View (Hidden on Desktop) */}
+  {/* Mobile Card View */}
   <div className="grid grid-cols-1 gap-4 md:hidden">
     {products.map((product) => (
-      <div key={product.id} className="rounded-xl border border-gray-300 bg-card p-4 shadow-sm space-y-4">
-        <div className="flex items-center gap-4">
-          <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-gray-300">
+      <div key={product.id} className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm active:scale-[0.98] transition-all">
+        <div className="flex items-start gap-4">
+          <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border border-slate-100 shadow-inner">
             <Image src={product.image} alt={product.name} fill className="object-cover" />
           </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-bold truncate text-sm uppercase">{product.name}</h3>
-            <p className="text-xs text-muted-foreground">{product.category}</p>
-            <p className="font-bold text-primary mt-1">{formatPrice(product.price)}</p>
+          <div className="flex-1 min-w-0 pt-1">
+            <div className="flex justify-between items-start">
+               <p className="text-[10px] font-black text-indigo-600 uppercase tracking-tighter mb-1">{product.category}</p>
+               <span className={`h-2 w-2 rounded-full ${product.inStock ? "bg-emerald-500" : "bg-rose-500"}`} />
+            </div>
+            <h3 className="font-bold text-slate-900 truncate leading-tight">{product.name}</h3>
+            <p className="font-black text-lg text-slate-900 mt-1">{formatPrice(product.price)}</p>
           </div>
         </div>
-        <div className="flex items-center justify-between pt-3 border-t border-gray-300">
-          <span
-            className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-              product.inStock ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
-            }`}
-          >
+        <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-50">
+          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border uppercase tracking-wide ${
+              product.inStock ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-rose-50 text-rose-700 border-rose-100"
+            }`}>
             {product.inStock ? "In Stock" : "Out of Stock"}
           </span>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => handleOpenDialog(product)}>
-              <Pencil className="h-3 w-3 mr-1" /> Edit
+            <Button variant="secondary" size="sm" className="h-8 rounded-lg font-bold text-xs" onClick={() => handleOpenDialog(product)}>
+              Edit
             </Button>
-            <Button variant="outline" size="sm" className="text-destructive" onClick={() => handleDelete(product.id)}>
-              <Trash2 className="h-3 w-3" />
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400" onClick={() => handleDelete(product.id)}>
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -229,110 +234,64 @@ export default function AdminProductsPage() {
 
   {/* Professional Dialog Layout */}
   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-    <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
-      <DialogHeader>
-        <DialogTitle className="text-2xl">{editingProduct ? "Edit Product" : "Add New Product"}</DialogTitle>
-        <DialogDescription>
-          {editingProduct
-            ? "Modify the fields below to update your product information."
-            : "Enter the details to list a new product in your store."}
+    <DialogContent className="sm:max-w-[550px] rounded-3xl p-0 overflow-hidden border-none shadow-2xl">
+      <div className="bg-slate-900 p-8 text-white">
+        <DialogTitle className="text-2xl font-bold">{editingProduct ? "Edit Product" : "New Product"}</DialogTitle>
+        <DialogDescription className="text-slate-400 mt-1">
+            Fill in the information below to sync with your store inventory.
         </DialogDescription>
-      </DialogHeader>
+      </div>
       
-      <div className="grid gap-6 py-6">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="name" className="text-sm font-semibold">Product Name</Label>
-          <Input
-            id="name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="e.g. Wireless Headphones"
-          />
+      <div className="p-8 space-y-6">
+        <div className="space-y-2">
+          <Label className="text-xs font-black uppercase text-slate-500 tracking-widest">Product Name</Label>
+          <Input className="h-12 bg-slate-50 border-slate-200 focus:ring-blue-500/20" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="price" className="text-sm font-semibold">Price (USD)</Label>
-            <Input
-              id="price"
-              type="number"
-              value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              placeholder="0.00"
-            />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-xs font-black uppercase text-slate-500 tracking-widest">Price (USD)</Label>
+            <Input type="number" className="h-12 bg-slate-50" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} />
           </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="category" className="text-sm font-semibold">Category</Label>
-            <Input
-              id="category"
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              placeholder="Electronics"
-            />
+          <div className="space-y-2">
+            <Label className="text-xs font-black uppercase text-slate-500 tracking-widest">Category</Label>
+            <Input className="h-12 bg-slate-50" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} />
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Label className="text-sm font-semibold">Product Image</Label>
-          <div className="flex flex-wrap items-center gap-4">
+        <div className="space-y-2">
+          <Label className="text-xs font-black uppercase text-slate-500 tracking-widest">Visuals</Label>
+          <div className="flex items-center gap-4">
             {formData.image ? (
-              <div className="relative h-32 w-32 overflow-hidden rounded-lg border border-gray-300 shadow-sm group">
+              <div className="relative h-24 w-24 overflow-hidden rounded-2xl border-2 border-slate-100 group">
                 <img src={formData.image} alt="Preview" className="h-full w-full object-cover" />
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, image: "" })}
-                  className="absolute right-2 top-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                >
-                  <X size={14} />
+                <button type="button" onClick={() => setFormData({ ...formData, image: "" })} className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                   <X className="text-white h-6 w-6" />
                 </button>
               </div>
             ) : (
-              <label className="flex h-32 w-32 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 hover:border-primary hover:bg-gray-50 transition-all">
-                <div className="rounded-full bg-gray-100 p-2 mb-2">
-                  <ImagePlus className="h-6 w-6 text-gray-500" />
-                </div>
-                <span className="text-xs font-medium text-gray-600">Add Image</span>
+              <label className="flex h-24 w-full cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 hover:bg-slate-50 transition-all">
+                <ImagePlus className="h-6 w-6 text-slate-400 mr-2" />
+                <span className="text-sm font-bold text-slate-500">Upload Product Image</span>
                 <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
               </label>
             )}
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="inStock" className="text-sm font-semibold">Inventory Status</Label>
-          <Select
-            value={formData.inStock}
-            onValueChange={(val) => setFormData({ ...formData, inStock: val })}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="true">In Stock</SelectItem>
-              <SelectItem value="false">Out of Stock</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="description" className="text-sm font-semibold">Description</Label>
-          <Input
-            id="description"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            placeholder="Brief product summary..."
-          />
+        <div className="grid grid-cols-2 gap-4 items-end">
+            <div className="space-y-2">
+                <Label className="text-xs font-black uppercase text-slate-500 tracking-widest">Status</Label>
+                <Select value={formData.inStock} onValueChange={(val) => setFormData({ ...formData, inStock: val })}>
+                    <SelectTrigger className="h-12 bg-slate-50"><SelectValue /></SelectTrigger>
+                    <SelectContent><SelectItem value="true">In Stock</SelectItem><SelectItem value="false">Out of Stock</SelectItem></SelectContent>
+                </Select>
+            </div>
+            <Button onClick={handleSave} className="h-12 bg-blue-600 hover:bg-blue-700 font-bold shadow-lg shadow-blue-200">
+                {editingProduct ? "Update Product" : "Create Product"}
+            </Button>
         </div>
       </div>
-
-      <DialogFooter className="gap-2 pt-2 border-t border-gray-300 mt-2">
-        <Button variant="ghost" onClick={() => setIsDialogOpen(false)}>
-          Cancel
-        </Button>
-        <Button onClick={handleSave} className="px-8 shadow-sm">
-          Save Changes
-        </Button>
-      </DialogFooter>
     </DialogContent>
   </Dialog>
 </div>

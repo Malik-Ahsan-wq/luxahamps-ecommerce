@@ -1,5 +1,7 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowRight, Link as LinkIcon } from 'lucide-react';
+
 
 const HappinessSection = () => {
   return (
@@ -20,12 +22,19 @@ const HappinessSection = () => {
           From luxurious treats to thoughtful gifts, our hampers are sure to delight your loved ones.
         </p>
 
-        <div className="pt-4 flex justify-center md:justify-start">
-          <button className="bg-black text-white px-8 py-4 flex items-center gap-3 group hover:bg-pink-600 transition-all duration-300">
-            <span className="uppercase text-xs font-bold tracking-widest">Shop Gifts Hamper</span>
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-          </button>
-        </div>
+       <div className="pt-4 flex justify-center md:justify-start">
+  <Link 
+    href="/products" 
+    className="bg-black text-white px-8 py-4 flex items-center gap-3 group hover:bg-pink-600 transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-pink-500/20"
+  >
+    <span className="uppercase text-xs font-bold tracking-widest">
+      Shop Gifts Hamper
+    </span>
+    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+  </Link>
+</div>
+        
+     
       </div>
 
       {/* Right Image Collage Side */}

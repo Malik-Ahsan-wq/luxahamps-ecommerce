@@ -1,11 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { ChevronRightIcon } from "lucide-react";
+import Link from "next/link";
 const slides = [
   {
     image: "/assets/customization.webp",
     shortTitle: "Your Style",
-    title: "Customize Your Style Easily",
+    title: "Customize Your Style",
     description: "Create your own unique designs easily and quickly and this is the best color and thingiking about you.",
   },
   {
@@ -35,7 +36,7 @@ const HeroSection = () => {
   }, [length]);
 
   return (
-    <div className="w-full relative h-screen overflow-hidden">
+    <div className="w-full relative  overflow-hidden">
       {/* Slider container */}
       <div
         className="flex w-full h-full transition-transform duration-1000 ease-in-out"
@@ -53,28 +54,34 @@ const HeroSection = () => {
             />
 
             {/* Overlay Text */}
-            <div className="absolute inset-0 bg-black/40 flex flex-col justify-center items-start p-6 md:p-20">
-              {/* Short Heading */}
-              <h3 className="text-xl md:text-2xl text-white font-semibold mb-2">
-                {slide.shortTitle}
-              </h3>
+         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center items-start p-6 md:p-20">
+  {/* Short Heading - Cleaned up spacing and added tracking */}
+  <h3 className="text-sm md:text-base text-pink-500 font-black uppercase tracking-[0.3em] mb-4 drop-shadow-md">
+    {slide.shortTitle}
+  </h3>
 
-              {/* Main Heading */}
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
-                {slide.title}
-              </h1>
+  {/* Main Heading - The "Ultra Professional" look */}
+  <h1 className="text-5xl md:text-2xl lg:text-7xl font-black tracking-tighter leading-[0.95] pb-3">
+    <span className="bg-clip-text text-transparent bg-gradient-to-br from-white via-slate-100 to-pink-500 drop-shadow-xl">
+      {slide.title}
+    </span>
+  </h1>
 
-              {/* Description */}
-              <p className="text-lg md:text-xl text-white max-w-xl mb-6">
-                {slide.description}
-              </p>
+  {/* Description - Improved line height and color for readability */}
+  <p className="text-base md:text-lg text-slate-200 max-w-lg mb-8 leading-relaxed font-medium">
+    {slide.description}
+  </p>
 
-              {/* Book Now Button */}
-              <button className="flex cursor-pointer items-center text-white font-medium gap-2 hover:text-pink-500 transition">
-                Book Now
-                <ChevronRightIcon className="w-5 h-5" />
-              </button>
-            </div>
+  {/* Book Now Button - Now with mt-10 as requested */}
+  <div className="mt-10">
+    <Link href="/products">
+    <button className="group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-full bg-white px-10 py-4 text-sm font-black uppercase tracking-widest text-black shadow-2xl transition-all duration-300 hover:bg-pink-600 hover:text-white hover:shadow-pink-500/40 active:scale-95">
+      <span className="relative z-10">Sop Now</span>
+      <ChevronRightIcon className="h-5 w-5 transition-transform duration-300 ease-out group-hover:translate-x-1.5 relative z-10" />
+    </button>
+    </Link>
+  </div>
+</div>
           </div>
         ))}
       </div>

@@ -27,7 +27,7 @@ export default function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="container flex min-h-[60vh] flex-col items-center justify-center px-4 py-12 text-center">
+      <div className="container hidden flex min-h-[60vh] flex-col items-center justify-center px-4 py-12 text-center">
         <div className="rounded-full bg-gray-100 p-6 mb-4">
           <ShoppingBag className="h-10 w-10 text-gray-400" />
         </div>
