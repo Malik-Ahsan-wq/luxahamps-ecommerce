@@ -30,8 +30,35 @@ export const useOrderStore = create<OrderState>()(
   persist(
     (set) => ({
       orders: [],
-      addOrder: (order) =>
-        set((state) => ({ orders: [order, ...state.orders] })),
+      addOrder: (order) => {
+        set((state) => ({ orders: [order, ...state.orders] }))
+        ;(async () => {
+          try {
+            const items = order.items.map((i) => ({
+              id: i.id,
+              name: i.name,
+              price: i.price,
+              quantity: i.quantity,
+            }))
+            await fetch('/api/orders', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                items,
+                email: order.customer.email,
+                paymentMethod: order.paymentMethod,
+                total: order.total,
+                customer: {
+                  name: order.customer.name,
+                  phone: order.customer.phone,
+                  address: order.customer.address,
+                  city: order.customer.city,
+                },
+              }),
+            })
+          } catch {}
+        })()
+      },
       updateOrderStatus: (orderId, status) =>
         set((state) => ({
           orders: state.orders.map((o) =>
