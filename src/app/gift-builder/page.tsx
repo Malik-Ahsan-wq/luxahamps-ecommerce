@@ -406,7 +406,7 @@ export default function GiftBuilderPage() {
                       <div key={product?.id} className="flex justify-between items-center text-sm border-b pb-2">
                         <div className="flex gap-3 items-center">
                           <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden shrink-0">
-                            <img src={product?.image} alt={product?.name} className="w-full h-full object-cover" />
+                            <img src={product?.image ?? "https://images.unsplash.com/photo-1555982105-d25af9c5cfaf?w=500&auto=format&fit=crop&q=60"} alt={product?.name ?? "Product"} className="w-full h-full object-cover" />
                           </div>
                           <div>
                             <p className="font-medium">{product?.name}</p>

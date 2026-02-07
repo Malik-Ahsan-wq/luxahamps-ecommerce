@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useCartStore } from '@/store/useCartStore'
 import { Badge } from '@/components/ui/badge'
+import ProfileDropdown from '@/components/ProfileDropdown'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
@@ -124,9 +125,7 @@ www.ahsanmalik.xyz            </span>
                 className="w-5 h-5 cursor-pointer"
                 onClick={() => setSearchOpen(true)}
               />
-              <Link href="/admin">
-                <User className="w-5 h-5 cursor-pointer hover:text-pink-600" />
-              </Link>
+              <ProfileDropdown />
               
               {/* <Heart className="w-5 h-5 cursor-pointer hover:text-pink-600" /> */}
               
