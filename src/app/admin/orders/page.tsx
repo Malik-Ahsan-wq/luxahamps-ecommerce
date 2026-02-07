@@ -43,7 +43,7 @@ export default function AdminOrdersPage() {
   };
 
   return (
-    <div className="p-8 space-y-8 min-h-screen bg-[#f8fafc]">
+    <div className="p-8 space-y-8 min-h-screen bg-white">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

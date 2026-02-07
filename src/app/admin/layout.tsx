@@ -33,7 +33,7 @@ export default function AdminLayout({
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#f8fafc]">
+    <div className="flex min-h-screen bg-white">
   {/* Sidebar */}
   <aside className="hidden md:flex w-72 flex-col border-r border-slate-200 bg-blue-100 backdrop-blur-xl sticky top-0 h-screen">
     {/* Branding Area */}
