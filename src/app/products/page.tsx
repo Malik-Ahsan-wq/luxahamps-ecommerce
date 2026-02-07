@@ -28,6 +28,7 @@ export default function ProductsPage() {
     setSortOption,
     resetFilters,
     applyFilters,
+    setProducts,
   } = useProductStore();
 
   const [showFilters, setShowFilters] = useState(false);
@@ -36,6 +37,19 @@ export default function ProductsPage() {
   useEffect(() => {
     applyFilters();
   }, [applyFilters]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch("/api/products", { cache: "no-store" });
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setProducts(data);
+        }
+      } catch {}
+    };
+    load();
+  }, [setProducts]);
 
   const uniqueColors = Array.from(
     new Set(useProductStore.getState().products.flatMap((p) => p.colors))

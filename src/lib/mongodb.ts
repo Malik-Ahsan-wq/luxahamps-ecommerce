@@ -1,7 +1,9 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, type MongoClientOptions } from "mongodb";
 
-const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/mydatabase";
-const options: any = {};
+const uri =
+  process.env.MONGODB_URI ??
+  (process.env.NODE_ENV === "development" ? "mongodb://127.0.0.1:27017/luxahamps" : undefined);
+const options: MongoClientOptions = {};
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
@@ -11,8 +13,8 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-if (!process.env.MONGODB_URI) {
-  // Using local default; in production set MONGODB_URI env
+if (!uri) {
+  throw new Error("MONGODB_URI is required in production environment");
 }
 
 if (process.env.NODE_ENV === "development") {

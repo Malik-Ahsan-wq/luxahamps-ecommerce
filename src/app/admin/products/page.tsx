@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useProductStore, Product } from "@/store/useProductStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +34,7 @@ import { Plus, Pencil, Trash2, MoreHorizontal, ImagePlus, X } from "lucide-react
 import Image from "next/image";
 
 export default function AdminProductsPage() {
-  const { products, addProduct, updateProduct, deleteProduct } = useProductStore();
+  const { products, addProduct, updateProduct, deleteProduct, setProducts } = useProductStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
@@ -78,7 +78,20 @@ export default function AdminProductsPage() {
     setIsDialogOpen(true);
   };
 
-  const handleSave = () => {
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch("/api/products", { cache: "no-store" });
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setProducts(data);
+        }
+      } catch {}
+    };
+    load();
+  }, [setProducts]);
+
+  const handleSave = async () => {
     const productData: Product = {
       id: editingProduct ? editingProduct.id : Math.random().toString(36).substr(2, 9),
       name: formData.name,
@@ -92,21 +105,40 @@ export default function AdminProductsPage() {
     };
 
     if (editingProduct) {
-      updateProduct(productData);
+      try {
+        await fetch(`/api/products/${editingProduct.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(productData),
+        });
+        updateProduct(productData);
+      } catch {}
     } else {
-      addProduct(productData);
+      try {
+        const res = await fetch("/api/products", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(productData),
+        });
+        const saved = await res.json();
+        const newProduct = { ...productData, id: saved.id || productData.id };
+        addProduct(newProduct);
+      } catch {}
     }
     setIsDialogOpen(false);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
-      deleteProduct(id);
+      try {
+        await fetch(`/api/products/${id}`, { method: "DELETE" });
+        deleteProduct(id);
+      } catch {}
     }
   };
 
   return (
-<div className="p-8 space-y-8 min-h-screen bg-[#f8fafc]">
+<div className="p-8 space-y-8 min-h-screen bg-white">
   {/* Header Section */}
   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-8">
     <div>
