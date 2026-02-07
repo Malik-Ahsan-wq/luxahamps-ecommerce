@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useCartStore } from '@/store/useCartStore'
 import { Badge } from '@/components/ui/badge'
-import ProfileDropdown from '@/components/ProfileDropdown'
+// Profile dropdown removed
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
@@ -125,7 +125,7 @@ www.ahsanmalik.xyz            </span>
                 className="w-5 h-5 cursor-pointer"
                 onClick={() => setSearchOpen(true)}
               />
-              <ProfileDropdown />
+              {/* Login removed */}
               
               {/* <Heart className="w-5 h-5 cursor-pointer hover:text-pink-600" /> */}
               
@@ -161,20 +161,12 @@ www.ahsanmalik.xyz            </span>
 
              <div className="pt-4">
                <Link 
-                 href="/admin"
+                 href="/gift-builder"
                  onClick={() => setOpen(false)}
-                 className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-md py-3 text-gray-700 hover:bg-gray-50 mb-4"
+                 className="w-full bg-pink-600 text-white px-5 py-3 rounded-md hover:bg-pink-700 transition flex items-center justify-center"
                >
-                 <User className="w-5 h-5" /> Admin Panel
+                 <Gift className="w-5 h-5 mr-2" />  MAKE YOUR OWN
                </Link>
-                
-                <Link 
-                  href="/gift-builder"
-                  onClick={() => setOpen(false)}
-                  className="w-full bg-pink-600 text-white px-5 py-3 rounded-md hover:bg-pink-700 transition flex items-center justify-center"
-                >
-                  <Gift className="w-5 h-5 mr-2" />  MAKE YOUR OWN
-                </Link>
              </div>
           </div>
         </div>
