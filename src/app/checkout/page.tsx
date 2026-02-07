@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/useCartStore";
 import { useOrderStore } from "@/store/useOrderStore";
-import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +17,6 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { cart, getCartTotal, clearCart } = useCartStore();
   const { addOrder } = useOrderStore();
-  const { user } = useAuthStore();
   
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -28,16 +26,6 @@ export default function CheckoutPage() {
     setIsMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      setFormData((prev) => ({
-        ...prev,
-        name: user.name || "",
-        email: user.email || "",
-      }));
-    }
-  }, [user]);
-  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -62,7 +50,6 @@ export default function CheckoutPage() {
 
     const newOrder = {
       id: Math.random().toString(36).substr(2, 9).toUpperCase(),
-      userId: user?._id,
       customer: formData,
       items: cart,
       total: getCartTotal(),

@@ -28,7 +28,6 @@ export default function ProductsPage() {
     setSortOption,
     resetFilters,
     applyFilters,
-    setProducts,
   } = useProductStore();
 
   const [showFilters, setShowFilters] = useState(false);
@@ -38,18 +37,7 @@ export default function ProductsPage() {
     applyFilters();
   }, [applyFilters]);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch("/api/products", { cache: "no-store" });
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setProducts(data);
-        }
-      } catch {}
-    };
-    load();
-  }, [setProducts]);
+  // Products are seeded in the store; no backend fetch required
 
   const uniqueColors = Array.from(
     new Set(useProductStore.getState().products.flatMap((p) => p.colors))

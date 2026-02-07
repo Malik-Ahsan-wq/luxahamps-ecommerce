@@ -1,30 +1,46 @@
-import clientPromise from "@/lib/mongodb";
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+ "use client";
+ 
+ import React from "react";
+ import { useOrderStore } from "@/store/useOrderStore";
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ import { formatPrice } from "@/lib/utils";
 
-export default async function AdminPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user || (session.user as any).role !== "admin") {
-    redirect("/auth/signin");
-  }
-  const client = await clientPromise;
-  const db = client.db();
-  const orders = await db.collection("orders").find({}).sort({ createdAt: -1 }).toArray();
+ export default function AdminPage() {
+   const { orders } = useOrderStore();
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-      <div className="space-y-3">
-        {orders.map((o) => (
-          <div key={o._id.toString()} className="border rounded p-3">
-            <div>User: {o.userId}</div>
-            <div>Total: {o.totalPrice}</div>
-            <div>Date: {new Date(o.createdAt).toLocaleString()}</div>
-            <div>Items: {Array.isArray(o.items) ? o.items.length : 0}</div>
-          </div>
-        ))}
-      </div>
-    </div>
+     <div className="container mx-auto px-4 py-12">
+       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+       <div className="grid gap-6 md:grid-cols-3">
+         <Card>
+           <CardHeader>
+             <CardTitle>Total Orders</CardTitle>
+           </CardHeader>
+           <CardContent>
+             <div className="text-3xl font-bold">{orders.length}</div>
+           </CardContent>
+         </Card>
+         <Card>
+           <CardHeader>
+             <CardTitle>Pending Orders</CardTitle>
+           </CardHeader>
+           <CardContent>
+             <div className="text-3xl font-bold">
+               {orders.filter((o) => o.status === "Pending").length}
+             </div>
+           </CardContent>
+         </Card>
+         <Card>
+           <CardHeader>
+             <CardTitle>Revenue</CardTitle>
+           </CardHeader>
+           <CardContent>
+             <div className="text-3xl font-bold">
+               {formatPrice(orders.reduce((sum, o) => sum + o.total, 0))}
+             </div>
+           </CardContent>
+         </Card>
+       </div>
+     </div>
   );
-}
+ }

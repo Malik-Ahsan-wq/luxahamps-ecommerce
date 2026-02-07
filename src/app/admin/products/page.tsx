@@ -78,18 +78,7 @@ export default function AdminProductsPage() {
     setIsDialogOpen(true);
   };
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch("/api/products", { cache: "no-store" });
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setProducts(data);
-        }
-      } catch {}
-    };
-    load();
-  }, [setProducts]);
+  // Products are managed in the store and persisted; no sync needed here
 
   const handleSave = async () => {
     const productData: Product = {
@@ -105,35 +94,16 @@ export default function AdminProductsPage() {
     };
 
     if (editingProduct) {
-      try {
-        await fetch(`/api/products/${editingProduct.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(productData),
-        });
-        updateProduct(productData);
-      } catch {}
+      updateProduct(productData);
     } else {
-      try {
-        const res = await fetch("/api/products", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(productData),
-        });
-        const saved = await res.json();
-        const newProduct = { ...productData, id: saved.id || productData.id };
-        addProduct(newProduct);
-      } catch {}
+      addProduct(productData);
     }
     setIsDialogOpen(false);
   };
 
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
-      try {
-        await fetch(`/api/products/${id}`, { method: "DELETE" });
-        deleteProduct(id);
-      } catch {}
+      deleteProduct(id);
     }
   };
 

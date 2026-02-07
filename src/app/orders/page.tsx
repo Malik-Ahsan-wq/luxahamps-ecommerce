@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/useAuthStore";
 import { useOrderStore } from "@/store/useOrderStore";
 import { formatPrice } from "@/lib/utils";
 import { Package, Calendar, MapPin, ChevronRight, ShoppingBag } from "lucide-react";
@@ -13,28 +12,16 @@ import { Badge } from "@/components/ui/badge";
 
 export default function OrdersPage() {
   const router = useRouter();
-  const { user, isAuthenticated } = useAuthStore();
   const { orders } = useOrderStore();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-    if (isMounted && !isAuthenticated) {
-      router.push("/");
-    }
-  }, [isAuthenticated, router, isMounted]);
+  }, []);
 
   if (!isMounted) return null;
 
-  if (!isAuthenticated) return null;
-
-  // Filter orders for the current user
-  // We match by userId if available, or fallback to email match
-  const userOrders = orders.filter(
-    (order) => 
-      (user?._id && order.userId === user._id) || 
-      (user?.email && order.customer.email === user.email)
-  );
+  const userOrders = orders;
 
   const getStatusColor = (status: string) => {
     switch (status) {
