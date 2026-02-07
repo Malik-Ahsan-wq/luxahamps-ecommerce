@@ -10,7 +10,7 @@ import VoicePage from "./VoiceSection/page";
 
 export default function Home() {
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="w-full bg-white">
       <HeroSection/>
       <GiftSlider/>
       <OurPromise/>

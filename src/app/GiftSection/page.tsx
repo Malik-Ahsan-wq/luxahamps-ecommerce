@@ -17,7 +17,7 @@ const GiftSlider = () => {
   const [isPaused, setIsPaused] = useState(false);
 
   return (
-    <div className="py-20 bg-white overflow-hidden">
+    <div className="py-20 bg-white overflow-hidden max-w-7xl mx-auto">
     <div className="text-center mb-16 px-4">
   {/* Eyebrow Heading - Luxury Brand Standard */}
   <span className="text-pink-600 text-xs font-black uppercase tracking-[0.4em] mb-4 block animate-fade-in">
