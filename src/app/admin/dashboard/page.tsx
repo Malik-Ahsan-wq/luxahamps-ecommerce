@@ -1,21 +1,30 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function AdminDashboardPage() {
+  const router = useRouter()
   const [orders, setOrders] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    try {
+      const session = typeof window !== 'undefined' ? localStorage.getItem('admin_session') : null
+      if (!session) {
+        router.replace('/admin')
+        return
+      }
+    } catch {}
+    load()
+  }, [router])
 
   const load = async () => {
     const res = await fetch('/api/admin/orders', { cache: 'no-store' })
     const data = await res.json()
     setOrders(Array.isArray(data) ? data : [])
   }
-
-  useEffect(() => {
-    load()
-  }, [])
 
   const updateStatus = async (id: string, status: string) => {
     setLoading(true)
@@ -28,9 +37,19 @@ export default function AdminDashboardPage() {
     load()
   }
 
+  const onLogout = () => {
+    try {
+      localStorage.removeItem('admin_session')
+    } catch {}
+    router.replace('/admin')
+  }
+
   return (
     <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+        <Button variant="outline" onClick={onLogout}>Logout</Button>
+      </div>
       <div className="grid gap-6 md:grid-cols-3 mb-8">
         <Card>
           <CardHeader><CardTitle>Total Orders</CardTitle></CardHeader>

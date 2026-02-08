@@ -76,7 +76,7 @@ const HeroSection = () => {
   <div className="mt-10">
     <Link href="/products">
     <button className="group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-full bg-white px-10 py-4 text-sm font-black uppercase tracking-widest text-black shadow-2xl transition-all duration-300 hover:bg-pink-600 hover:text-white hover:shadow-pink-500/40 active:scale-95">
-      <span className="relative z-10">Sop Now</span>
+      <span className="relative z-10">Shop Now</span>
       <ChevronRightIcon className="h-5 w-5 transition-transform duration-300 ease-out group-hover:translate-x-1.5 relative z-10" />
     </button>
     </Link>

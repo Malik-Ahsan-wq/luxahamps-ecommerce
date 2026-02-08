@@ -247,10 +247,14 @@ www.ahsanmalik.xyz            </span>
                   onClick={() => router.push('/useraccount')}
                 />
               ) : (
-                <LogIn
-                  className="w-5 h-5 cursor-pointer hover:text-pink-600"
-                  onClick={() => setLoginOpen(true)}
-                />
+                <button
+      type="button"
+      aria-label="Open signup"
+      onClick={() => router.push("/sign-up")}
+      className="p-0 m-0 bg-transparent border-0"
+    >
+      <LogIn className="w-5 h-5 cursor-pointer hover:text-pink-600" />
+    </button>
               )}
               
               {/* <Heart className="w-5 h-5 cursor-pointer hover:text-pink-600" /> */}

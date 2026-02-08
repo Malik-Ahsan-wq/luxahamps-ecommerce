@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
 
   const sidebarItems = [
@@ -27,6 +28,19 @@ export default function AdminLayout({
     { title: "Products", href: "/admin/products", icon: Package },
     { title: "Orders", href: "/admin/orders", icon: ShoppingCart },
   ];
+
+  useEffect(() => {
+    try {
+      const session = typeof window !== "undefined" ? localStorage.getItem("admin_session") : null;
+      const isLogin = pathname === "/admin";
+      if (!session && !isLogin) {
+        router.replace("/admin");
+      }
+      if (session && isLogin) {
+        router.replace("/admin/dashboard");
+      }
+    } catch {}
+  }, [pathname, router]);
 
   // Shared Sidebar UI
   const SidebarContent = ({ isMobile = false }: { isMobile?: boolean }) => (
