@@ -1,6 +1,6 @@
 'use client'
-import { Search, ChevronDownIcon, Gift, User, Heart, ShoppingCart, Menu, X, LayoutDashboard, User2, } from 'lucide-react'
-import { useState, useEffect, Profiler } from 'react'
+import { Search, ChevronDownIcon, Gift, User, Heart, ShoppingCart, Menu, X, LayoutDashboard, LogIn } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useCartStore } from '@/store/useCartStore'
 import { Badge } from '@/components/ui/badge'
@@ -20,6 +20,8 @@ export default function Navbar() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const [profileImage, setProfileImage] = useState<string | null>(null)
+  const [isAuthed, setIsAuthed] = useState(false)
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -85,6 +87,50 @@ export default function Navbar() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const session = await supabase.auth.getSession()
+      const token = session.data.session?.access_token || ''
+      const loggedIn = !!token
+      setIsAuthed(loggedIn)
+      if (!loggedIn) {
+        setProfileImage(null)
+        return
+      }
+      try {
+        const res = await fetch('/api/user/profile', { headers: { authorization: `Bearer ${token}` }, cache: 'no-store' })
+        const p = await res.json()
+        if (p && typeof p === 'object' && typeof p.profile_image === 'string' && p.profile_image.length > 0) {
+          setProfileImage(p.profile_image)
+        } else {
+          setProfileImage(null)
+        }
+      } catch {
+        setProfileImage(null)
+      }
+    }
+    fetchProfile()
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthed(!!session)
+      if (!session) {
+        setProfileImage(null)
+        return
+      }
+      fetchProfile()
+    })
+    const onProfileUpdate = (e: Event) => {
+      const detail = (e as CustomEvent).detail as any
+      if (detail?.profile_image && typeof detail.profile_image === 'string') {
+        setProfileImage(detail.profile_image)
+      }
+    }
+    window.addEventListener('profile:update', onProfileUpdate as EventListener)
+    return () => {
+      sub?.subscription?.unsubscribe()
+      window.removeEventListener('profile:update', onProfileUpdate as EventListener)
+    }
+  }, [])
 
   return (
     <>
@@ -193,11 +239,19 @@ www.ahsanmalik.xyz            </span>
                 className="w-5 h-5 cursor-pointer"
                 onClick={() => setSearchOpen(true)}
               />
-              {/* Login removed */}
-              <User2
-                className="w-5 h-5 cursor-pointer hover:text-pink-600"
-                onClick={() => setLoginOpen(true)}
-              />
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt="profile"
+                  className="w-5 h-5 rounded-full object-cover cursor-pointer"
+                  onClick={() => router.push('/useraccount')}
+                />
+              ) : (
+                <LogIn
+                  className="w-5 h-5 cursor-pointer hover:text-pink-600"
+                  onClick={() => setLoginOpen(true)}
+                />
+              )}
               
               {/* <Heart className="w-5 h-5 cursor-pointer hover:text-pink-600" /> */}
               
