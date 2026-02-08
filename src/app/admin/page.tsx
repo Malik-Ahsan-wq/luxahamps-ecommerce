@@ -14,8 +14,8 @@
    const [error, setError] = useState<string | null>(null);
    const [loading, setLoading] = useState(false);
  
-   const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? "";
-   const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD ?? "";
+   const ADMIN_EMAIL = (process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? "").trim();
+   const ADMIN_PASSWORD = (process.env.NEXT_PUBLIC_ADMIN_PASSWORD ?? "").trim();
  
    useEffect(() => {
      try {
@@ -33,7 +33,7 @@
      try {
        const ok =
          email.trim().toLowerCase() === ADMIN_EMAIL.trim().toLowerCase() &&
-         password === ADMIN_PASSWORD;
+         password.trim() === ADMIN_PASSWORD;
        if (!ok) {
          setError("Access Denied");
          return;
