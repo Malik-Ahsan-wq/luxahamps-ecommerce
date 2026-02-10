@@ -5,132 +5,19 @@ import Link from 'next/link'
 import { useCartStore } from '@/store/useCartStore'
 import { Badge } from '@/components/ui/badge'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabaseClient'
 // Profile dropdown removed
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const [loginOpen, setLoginOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false);
-  const [isLogin, setIsLogin] = useState(true)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const [profileImage, setProfileImage] = useState<string | null>(null)
-  const [isAuthed, setIsAuthed] = useState(false)
-
-  const handleAuthSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setLoading(true)
-    try {
-      if (isLogin) {
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-        if (signInError) {
-          setError(signInError.message)
-          setLoading(false)
-          return
-        }
-        const { data: userData } = await supabase.auth.getUser()
-        const userId = userData.user?.id
-        const userEmail = userData.user?.email ?? email
-        await fetch('/api/auth/save-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: userId, email: userEmail }),
-        })
-        setLoginOpen(false)
-        router.push('/useraccount')
-      } else {
-        if (password !== confirmPassword) {
-          setError('Passwords do not match')
-          setLoading(false)
-          return
-        }
-        const { error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-        })
-        if (signUpError) {
-          setError(signUpError.message)
-          setLoading(false)
-          return
-        }
-        const { data: userData } = await supabase.auth.getUser()
-        const userId = userData.user?.id
-        const userEmail = userData.user?.email ?? email
-        await fetch('/api/auth/save-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: userId, email: userEmail }),
-        })
-        setLoginOpen(false)
-        router.push('/useraccount')
-      }
-    } catch {
-      setError('Something went wrong. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-  
   const { openCart, getCartItemsCount } = useCartStore();
   const cartCount = getCartItemsCount();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const session = await supabase.auth.getSession()
-      const token = session.data.session?.access_token || ''
-      const loggedIn = !!token
-      setIsAuthed(loggedIn)
-      if (!loggedIn) {
-        setProfileImage(null)
-        return
-      }
-      try {
-        const res = await fetch('/api/user/profile', { headers: { authorization: `Bearer ${token}` }, cache: 'no-store' })
-        const p = await res.json()
-        if (p && typeof p === 'object' && typeof p.profile_image === 'string' && p.profile_image.length > 0) {
-          setProfileImage(p.profile_image)
-        } else {
-          setProfileImage(null)
-        }
-      } catch {
-        setProfileImage(null)
-      }
-    }
-    fetchProfile()
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthed(!!session)
-      if (!session) {
-        setProfileImage(null)
-        return
-      }
-      fetchProfile()
-    })
-    const onProfileUpdate = (e: Event) => {
-      const detail = (e as CustomEvent).detail as any
-      if (detail?.profile_image && typeof detail.profile_image === 'string') {
-        setProfileImage(detail.profile_image)
-      }
-    }
-    window.addEventListener('profile:update', onProfileUpdate as EventListener)
-    return () => {
-      sub?.subscription?.unsubscribe()
-      window.removeEventListener('profile:update', onProfileUpdate as EventListener)
-    }
-  }, [])
 
   return (
     <>
@@ -239,23 +126,14 @@ www.ahsanmalik.xyz            </span>
                 className="w-5 h-5 cursor-pointer"
                 onClick={() => setSearchOpen(true)}
               />
-              {profileImage ? (
-                <img
-                  src={profileImage}
-                  alt="profile"
-                  className="w-5 h-5 rounded-full object-cover cursor-pointer"
-                  onClick={() => router.push('/useraccount')}
-                />
-              ) : (
-                <button
-      type="button"
-      aria-label="Open signup"
-      onClick={() => router.push("/login")}
-      className="p-0 m-0 bg-transparent border-0"
-    >
-      <LogIn className="w-5 h-5 cursor-pointer hover:text-pink-600" />
-    </button>
-              )}
+              <button
+                type="button"
+                aria-label="Open account"
+                onClick={() => router.push('/')}
+                className="p-0 m-0 bg-transparent border-0"
+              >
+                <User className="w-5 h-5 cursor-pointer hover:text-pink-600" />
+              </button>
               
               {/* <Heart className="w-5 h-5 cursor-pointer hover:text-pink-600" /> */}
               
@@ -311,92 +189,7 @@ www.ahsanmalik.xyz            </span>
          <X className="w-6 h-6 cursor-pointer hover:text-red-500" onClick={() => setSearchOpen(false)} />
       </div>
 
-      {loginOpen && (
-        <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg relative">
-            <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-              onClick={() => setLoginOpen(false)}
-            >
-              <X className="w-6 h-6" />
-            </button>
-
-            <div className="mb-6 text-center">
-              <h2 className="text-2xl font-bold text-gray-800">
-                {isLogin ? 'Sign In' : 'Create Account'}
-              </h2>
-              <p className="mt-1 text-sm text-gray-600">
-                {isLogin ? 'Enter your credentials' : 'Join us today'}
-              </p>
-              {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
-            </div>
-
-            <form className="space-y-4" onSubmit={handleAuthSubmit}>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Email</label>
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={loading}
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Password</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={loading}
-                />
-              </div>
-
-              {!isLogin && (
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Confirm Password</label>
-                  <input
-                    type="password"
-                    placeholder="••••••••"
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    disabled={loading}
-                  />
-                </div>
-              )}
-
-              <button
-                type="submit"
-                className="w-full rounded-lg bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 disabled:opacity-60"
-                disabled={loading}
-              >
-                {loading ? (isLogin ? 'Signing In...' : 'Signing Up...') : (isLogin ? 'Sign In' : 'Sign Up')}
-              </button>
-            </form>
-
-            <div className="mt-4 text-center text-sm">
-              <p className="text-gray-600">
-                {isLogin ? "Don't have an account?" : 'Already have an account?'}
-                <button
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="ml-1 font-bold text-blue-600 hover:underline"
-                  disabled={loading}
-                >
-                  {isLogin ? 'Sign Up' : 'Sign In'}
-                </button>
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </>
   )
 }
