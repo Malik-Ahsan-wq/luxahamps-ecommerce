@@ -250,7 +250,7 @@ www.ahsanmalik.xyz            </span>
                 <button
       type="button"
       aria-label="Open signup"
-      onClick={() => router.push("/sign-up")}
+      onClick={() => router.push("/login")}
       className="p-0 m-0 bg-transparent border-0"
     >
       <LogIn className="w-5 h-5 cursor-pointer hover:text-pink-600" />

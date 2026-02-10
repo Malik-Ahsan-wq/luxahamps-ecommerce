@@ -60,15 +60,13 @@ const AuthForm = () => {
           setLoading(false);
           return;
         }
-        const { data: userData } = await supabase.auth.getUser();
-        const userId = userData.user?.id;
-        const userEmail = userData.user?.email ?? email;
-        await fetch('/api/auth/save-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: userId, email: userEmail }),
-        });
-        router.push('/useraccount');
+        if (typeof window !== 'undefined') {
+          try {
+            const payload = JSON.stringify({ email, password });
+            window.sessionStorage.setItem('signup_credentials', payload);
+          } catch {}
+        }
+        router.push('/login?signup=1');
       }
     } catch {
       setError('Something went wrong. Please try again.');
