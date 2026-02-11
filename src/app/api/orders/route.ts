@@ -17,10 +17,9 @@ export async function POST(req: Request) {
     const customer_name = (customer?.name ?? cn ?? null) as string | null
     const pm = typeof paymentMethod === 'string' && paymentMethod.length > 0 ? paymentMethod : (typeof payment_method === 'string' ? payment_method : 'COD')
 
-    // Ensure user exists in users table
     let userId: string | null = null
     {
-      const { data: existing, error: findErr } = await supabaseAdmin
+      const { data: existing } = await supabaseAdmin
         .from('users')
         .select('id')
         .eq('email', emailVal)
@@ -39,27 +38,33 @@ export async function POST(req: Request) {
       }
     }
 
-    // Build orders rows per requested schema
-    const rows = list.map((item: any) => {
+    const computedTotal = list.reduce((sum: number, item: any) => {
       const qty = typeof item.quantity === 'number' ? item.quantity : Number(item.quantity) || 1
       const price = typeof item.price === 'number' ? item.price : Number(item.price) || 0
-      return {
-        user_id: userId,
-        product_id: item.id,
-        quantity: qty,
-        total: price * qty,
-      }
-    })
+      return sum + price * qty
+    }, 0)
+    const totalAmount = typeof total === 'number' ? total : computedTotal
+    const shipping_address = [
+      customer_name || '',
+      customer?.phone || '',
+      customer?.address || '',
+      customer?.city || ''
+    ].filter(Boolean).join(', ')
 
-    const { data: inserted, error: insertErr } = await supabaseAdmin.from('orders').insert(rows)
+    const { error: insertErr } = await supabaseAdmin
+      .from('orders')
+      .insert({
+        user_id: userId,
+        status: 'pending',
+        total_amount: totalAmount,
+        payment_method: pm,
+        shipping_address,
+      })
     if (insertErr) {
-      return NextResponse.json({ error: 'Failed to save orders' }, { status: 500 })
+      return NextResponse.json({ error: 'Failed to save order' }, { status: 500 })
     }
 
-    const orderTotal = typeof total === 'number'
-      ? total
-      : rows.reduce((s, r) => s + (r.total || 0), 0)
-    return NextResponse.json({ ok: true, count: rows.length, total: orderTotal })
+    return NextResponse.json({ ok: true, total: totalAmount })
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
