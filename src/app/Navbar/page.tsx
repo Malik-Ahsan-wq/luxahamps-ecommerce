@@ -5,18 +5,32 @@ import Link from 'next/link'
 import { useCartStore } from '@/store/useCartStore'
 import { Badge } from '@/components/ui/badge'
 import { useRouter } from 'next/navigation'
+import AuthModal from '@/components/AuthModal'
+import { useAuthStore, signOut, getCurrentSession } from '@/store/useAuthStore'
 // Profile dropdown removed
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false)
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false)
   const router = useRouter()
   const { openCart, getCartItemsCount } = useCartStore();
   const cartCount = getCartItemsCount();
+  const { isAuthenticated, user } = useAuthStore()
 
   useEffect(() => {
     setIsMounted(true);
+    ;(async () => {
+      const s = await getCurrentSession()
+      if (s?.user) {
+        useAuthStore.getState().setSession(
+          { id: s.user.id, email: s.user.email ?? null, name: s.user.user_metadata?.name ?? null, avatar_url: s.user.user_metadata?.avatar_url ?? null },
+          s.access_token || ''
+        )
+      }
+    })()
   }, []);
 
   return (
@@ -126,14 +140,49 @@ www.ahsanmalik.xyz            </span>
                 className="w-5 h-5 cursor-pointer"
                 onClick={() => setSearchOpen(true)}
               />
-              <button
-                type="button"
-                aria-label="Open account"
-                onClick={() => router.push('/')}
-                className="p-0 m-0 bg-transparent border-0"
-              >
-                <User className="w-5 h-5 cursor-pointer hover:text-pink-600" />
-              </button>
+              <div className="relative">
+                {isAuthenticated ? (
+                  <button
+                    type="button"
+                    aria-label="Open profile menu"
+                    onClick={() => setProfileMenuOpen((v) => !v)}
+                    className="p-0 m-0 bg-transparent border-0"
+                  >
+                    {user?.avatar_url ? (
+                      <img src={user.avatar_url || ''} alt="profile" className="h-6 w-6 rounded-full object-cover" />
+                    ) : (
+                      <div className="h-6 w-6 rounded-full bg-gray-900 text-white text-xs font-bold flex items-center justify-center">
+                        {(user?.name?.[0] || user?.email?.[0] || 'U').toUpperCase()}
+                      </div>
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    aria-label="Open account"
+                    onClick={() => setAuthOpen(true)}
+                    className="p-0 m-0 bg-transparent border-0"
+                  >
+                    <User className="w-5 h-5 cursor-pointer hover:text-pink-600" />
+                  </button>
+                )}
+                {profileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-40 rounded-md border bg-white shadow-md z-50">
+                    <button
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50"
+                      onClick={() => { setProfileMenuOpen(false); router.push('/account') }}
+                    >
+                      My Account
+                    </button>
+                    <button
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50"
+                      onClick={() => { setProfileMenuOpen(false); signOut() }}
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
               
               {/* <Heart className="w-5 h-5 cursor-pointer hover:text-pink-600" /> */}
               
@@ -190,6 +239,7 @@ www.ahsanmalik.xyz            </span>
       </div>
 
       
+      <AuthModal open={authOpen} onOpenChange={setAuthOpen} />
     </>
   )
 }
