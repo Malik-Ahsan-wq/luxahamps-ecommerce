@@ -5,6 +5,7 @@ import ProductDetails from "@/components/ProductDetails";
 import { useProductStore } from "@/store/useProductStore";
 import { useEffect, useState } from "react";
 import { Product } from "@/store/useQuickViewStore";
+import { JsonLd } from "@/components/JsonLd";
 
 export default function ProductPage() {
   const params = useParams();
@@ -48,6 +49,22 @@ export default function ProductPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-20">
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": product.name,
+        "image": product.image,
+        "description": product.description || "Premium product",
+        "brand": { "@type": "Brand", "name": "Luxahamps" },
+        "category": product.category,
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "USD",
+          "price": product.price,
+          "availability": (product.stock ?? 0) > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+          "url": `https://luxahamps-ecommerce.vercel.app/product/${product.id}`
+        }
+      }} />
       <ProductDetails product={product} />
     </div>
   );

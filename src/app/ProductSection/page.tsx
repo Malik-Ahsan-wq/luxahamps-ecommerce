@@ -6,6 +6,7 @@ import AddToCartButton from '@/components/AddToCartButton';
 import { useQuickViewStore } from '@/store/useQuickViewStore';
 import { useProductStore } from '@/store/useProductStore';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const ProductSection = () => {
   const { products, loadProducts } = useProductStore();
@@ -65,11 +66,12 @@ const ProductSection = () => {
                   </button>
                 </div>
 
-                {/* Main Product Image */}
-                <img
+                <Image
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
                 />
 
                 {/* Add to Cart Button */}

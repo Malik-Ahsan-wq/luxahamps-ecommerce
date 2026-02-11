@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Search, Filter, X, Grid, List } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import BrandSlider from "../BrandSlider/page";
+import { JsonLd } from "@/components/JsonLd";
 
 export default function ProductsPage() {
   const {
@@ -52,6 +53,14 @@ export default function ProductsPage() {
 
   return (
     <div className="bg-gray-50/50 min-h-screen">
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://luxahamps-ecommerce.vercel.app" },
+          { "@type": "ListItem", "position": 2, "name": "Shop", "item": "https://luxahamps-ecommerce.vercel.app/products" }
+        ]
+      }} />
       {/* Header Banner */}
       <div className="bg-white border-b border-gray-300">
         <div className="container mx-auto px-4 py-8 md:py-12">
