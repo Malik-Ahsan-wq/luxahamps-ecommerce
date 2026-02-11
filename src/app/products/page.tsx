@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useProductStore } from "@/store/useProductStore";
 import ProductCard from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Search, Filter, X, Grid, List } from "lucide-react";
+import { Search, Filter } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import BrandSlider from "../BrandSlider/page";
 import { JsonLd } from "@/components/JsonLd";
@@ -32,7 +32,7 @@ export default function ProductsPage() {
     loadProducts,
   } = useProductStore();
 
-  const [showFilters, setShowFilters] = useState(false);
+  // const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     loadProducts();
@@ -291,7 +291,7 @@ export default function ProductsPage() {
                   <span className="text-sm text-gray-500 whitespace-nowrap">Sort by:</span>
                   <Select
                     value={sortOption || "newest"}
-                    onValueChange={(val: any) => setSortOption(val)}
+                    onValueChange={(val: 'price-asc' | 'price-desc' | 'newest') => setSortOption(val)}
                   >
                     <SelectTrigger className="w-[180px] border border-gray-300 shadow-none  hover:bg-gray-50">
                       <SelectValue placeholder="Sort by" />
@@ -320,7 +320,7 @@ export default function ProductsPage() {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900">No products found</h3>
                 <p className="text-gray-500 mt-1 max-w-sm mx-auto">
-                  We couldn't find any products matching your search or filters. Try adjusting your criteria.
+                  We couldn&apos;t find any products matching your search or filters. Try adjusting your criteria.
                 </p>
                 <Button
                   variant="outline"

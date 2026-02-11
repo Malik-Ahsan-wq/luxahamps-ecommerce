@@ -1,4 +1,4 @@
-import Image from "next/image";
+// import Image from "next/image";
 import dynamic from "next/dynamic";
 import HeroSection from "./HeroSection/page";
 import GiftSlider from "./GiftSection/page";
