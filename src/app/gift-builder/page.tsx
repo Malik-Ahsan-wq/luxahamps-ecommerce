@@ -16,8 +16,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 
 export default function GiftBuilderPage() {
   const router = useRouter();
-  const { products } = useProductStore();
+  const { products, loadProducts } = useProductStore();
   const { addToCart, openCart } = useCartStore();
+  useEffect(() => { loadProducts() }, [loadProducts])
 
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedBox, setSelectedBox] = useState<string | null>(null);

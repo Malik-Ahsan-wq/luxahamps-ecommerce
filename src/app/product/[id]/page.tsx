@@ -9,8 +9,12 @@ import { Product } from "@/store/useQuickViewStore";
 export default function ProductPage() {
   const params = useParams();
   const id = params?.id;
-  const { products } = useProductStore();
+  const { products, loadProducts } = useProductStore();
   const [product, setProduct] = useState<Product | null>(null);
+
+  useEffect(() => {
+    loadProducts()
+  }, [loadProducts])
 
   useEffect(() => {
     if (id) {

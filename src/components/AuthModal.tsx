@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { signInWithEmail, signUpWithEmail, signInWithGoogle, getCurrentSession, useAuthStore } from '@/store/useAuthStore'
+import { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithGithub, getCurrentSession, useAuthStore } from '@/store/useAuthStore'
 import { useRouter } from 'next/navigation'
 
 type Props = {
@@ -70,6 +70,19 @@ export default function AuthModal({ open, onOpenChange }: Props) {
     }
   }
 
+  const handleGithub = async () => {
+    setError(null)
+    try {
+      if (!isConfigured) {
+        setError('Supabase is not configured')
+        return
+      }
+      await signInWithGithub(`${window.location.origin}/account`)
+    } catch (e: any) {
+      setError(e.message || 'Authentication error')
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -105,6 +118,14 @@ export default function AuthModal({ open, onOpenChange }: Props) {
               </svg>
             </span>
             Continue with Google
+          </Button>
+          <Button variant="outline" className="w-full flex items-center gap-2" onClick={handleGithub} disabled={!isConfigured}>
+            <span className="inline-block h-4 w-4">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path fill="#000000" d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.38.6.11.82-.26.82-.58 0-.29-.01-1.06-.02-2.08-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.35-1.76-1.35-1.76-1.1-.75.08-.73.08-.73 1.22.09 1.86 1.26 1.86 1.26 1.08 1.85 2.82 1.31 3.51 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.48-1.33-5.48-5.93 0-1.31.47-2.38 1.25-3.22-.13-.3-.54-1.52.12-3.16 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.41 1.02.01 2.04.14 3 .41 2.29-1.55 3.3-1.23 3.3-1.23.66 1.64.25 2.86.12 3.16.78.84 1.25 1.91 1.25 3.22 0 4.61-2.81 5.63-5.49 5.93.43.37.81 1.1.81 2.22 0 1.6-.02 2.89-.02 3.29 0 .32.21.69.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+            </span>
+            Continue with GitHub
           </Button>
           <div className="text-sm text-center">
             {mode === 'login' ? (

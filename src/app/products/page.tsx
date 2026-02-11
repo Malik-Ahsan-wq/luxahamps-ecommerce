@@ -28,16 +28,17 @@ export default function ProductsPage() {
     setSortOption,
     resetFilters,
     applyFilters,
+    loadProducts,
   } = useProductStore();
 
   const [showFilters, setShowFilters] = useState(false);
 
-  // Initial apply
   useEffect(() => {
+    loadProducts();
     applyFilters();
-  }, [applyFilters]);
+  }, [applyFilters, loadProducts]);
 
-  // Products are seeded in the store; no backend fetch required
+  
 
   const uniqueColors = Array.from(
     new Set(useProductStore.getState().products.flatMap((p) => p.colors))

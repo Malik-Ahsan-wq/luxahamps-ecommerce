@@ -60,6 +60,15 @@ export async function signInWithGoogle(redirectTo?: string) {
   return data
 }
 
+export async function signInWithGithub(redirectTo?: string) {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
+    options: { redirectTo },
+  })
+  if (error) throw error
+  return data
+}
+
 export async function getCurrentSession() {
   const { data } = await supabase.auth.getSession()
   return data.session || null

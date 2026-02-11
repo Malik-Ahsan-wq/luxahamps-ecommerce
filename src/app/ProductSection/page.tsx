@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Heart, Search } from 'lucide-react';
 import AddToCartButton from '@/components/AddToCartButton';
 import { useQuickViewStore } from '@/store/useQuickViewStore';
@@ -8,8 +8,9 @@ import { useProductStore } from '@/store/useProductStore';
 import Link from 'next/link';
 
 const ProductSection = () => {
-  const { products } = useProductStore();
+  const { products, loadProducts } = useProductStore();
   const openQuickView = useQuickViewStore((state) => state.openQuickView);
+  useEffect(() => { loadProducts() }, [loadProducts])
 
   // Take only first 8 products
   const displayProducts = products.slice(0, 12);
