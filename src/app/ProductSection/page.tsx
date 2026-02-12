@@ -23,12 +23,10 @@ const ProductSection = () => {
     {/* Editorial Header */}
     <header className="flex flex-col md:flex-row items-baseline justify-between mb-10 md:mb-16 border-b border-gray-100 pb-6 md:pb-8">
       <div className="space-y-1">
-        <h2 className="text-2xl md:text-4xl font-light tracking-tighter lg:text-5xl">
-          Curated <span className="italic font-serif">Selection</span>
+        <h2 className="text-2xl  md:text-4xl font-light tracking-tighter lg:text-5xl">
+          Curated <span className="italic font-serif text-pink-400">Selection</span>
         </h2>
-        <p className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] text-gray-400 font-medium">
-          Edition — 01 / 2026
-        </p>
+      
       </div>
       <Link 
         href="/products" 
