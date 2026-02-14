@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -98,6 +98,9 @@ export default function MessageButton() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Quick Access</DialogTitle>
+            <DialogDescription>
+              Login with email and password, then leave a product review.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-5">
             <div className="space-y-3">

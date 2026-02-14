@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import RatingStars from "./RatingStars"
@@ -67,6 +67,9 @@ export default function RatingModal({ productId, open, onOpenChange }: Props) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Rate this product</DialogTitle>
+          <DialogDescription>
+            Select a star rating and write an optional review.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="flex items-center gap-3">

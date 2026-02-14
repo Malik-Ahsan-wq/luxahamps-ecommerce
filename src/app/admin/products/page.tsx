@@ -37,6 +37,9 @@ export default function AdminProductsPage() {
   const { products, addProduct, updateProduct, deleteProduct, setProducts } = useProductStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [gallery, setGallery] = useState<Array<{ id: string; image_url: string; color_variant?: string | null }>>([])
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([])
+  const [uploading, setUploading] = useState(false)
 
   const initialFormState = {
     name: "",
@@ -71,9 +74,18 @@ export default function AdminProductsPage() {
         inStock: product.inStock.toString(),
         description: product.description || "",
       });
+      ;(async () => {
+        try {
+          const res = await fetch(`/api/products/${encodeURIComponent(String(product.id))}/images`, { cache: 'no-store' })
+          const data = res.ok ? await res.json() : []
+          setGallery(Array.isArray(data) ? data : [])
+        } catch { setGallery([]) }
+      })()
     } else {
       setEditingProduct(null);
       setFormData(initialFormState);
+      setGallery([])
+      setGalleryFiles([])
     }
     setIsDialogOpen(true);
   };
@@ -94,9 +106,36 @@ export default function AdminProductsPage() {
     };
 
     if (editingProduct) {
-      updateProduct(productData);
+      await updateProduct(productData);
+      if (galleryFiles.length > 0) {
+        try {
+          setUploading(true)
+          const fd = new FormData()
+          galleryFiles.forEach((f) => fd.append('files', f))
+          await fetch(`/api/products/${encodeURIComponent(String(productData.id))}/images`, { method: 'POST', body: fd })
+          setGalleryFiles([])
+          const res = await fetch(`/api/products/${encodeURIComponent(String(productData.id))}/images`, { cache: 'no-store' })
+          const data = res.ok ? await res.json() : []
+          setGallery(Array.isArray(data) ? data : [])
+        } catch {} finally { setUploading(false) }
+      }
     } else {
-      addProduct(productData);
+      await addProduct(productData);
+      // Find newly created product id from store by name and price fallback
+      let createdId = productData.id
+      try {
+        const latest = useProductStore.getState().products.find(p => p.name === productData.name && p.price === productData.price)
+        if (latest) createdId = latest.id
+      } catch {}
+      if (galleryFiles.length > 0) {
+        try {
+          setUploading(true)
+          const fd = new FormData()
+          galleryFiles.forEach((f) => fd.append('files', f))
+          await fetch(`/api/products/${encodeURIComponent(String(createdId))}/images`, { method: 'POST', body: fd })
+          setGalleryFiles([])
+        } catch {} finally { setUploading(false) }
+      }
     }
     setIsDialogOpen(false);
   };
@@ -279,6 +318,44 @@ export default function AdminProductsPage() {
               </label>
             )}
           </div>
+        </div>
+
+        <div className="space-y-3">
+          <Label className="text-xs font-black uppercase text-slate-500 tracking-widest">Gallery Images</Label>
+          {gallery.length > 0 && (
+            <div className="grid grid-cols-4 gap-3">
+              {gallery.map((img) => (
+                <div key={img.id} className="relative aspect-square overflow-hidden rounded-xl border">
+                  <img src={img.image_url} alt="Gallery" className="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    className="absolute top-1 right-1 bg-white/90 text-rose-600 text-xs font-bold px-2 py-1 rounded"
+                    onClick={async () => {
+                      try {
+                        await fetch(`/api/products/images/${encodeURIComponent(String(img.id))}`, { method: 'DELETE' })
+                        setGallery((prev) => prev.filter((g) => g.id !== img.id))
+                      } catch {}
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={(e) => {
+              const files = Array.from(e.target.files || []).filter((f) => f.type.startsWith('image/'))
+              setGalleryFiles(files as File[])
+            }}
+          />
+          {galleryFiles.length > 0 && (
+            <div className="text-xs text-slate-500">{galleryFiles.length} file(s) selected</div>
+          )}
+          {uploading && <div className="text-xs text-slate-500">Uploading images...</div>}
         </div>
 
         <div className="grid grid-cols-2 gap-4 items-end">

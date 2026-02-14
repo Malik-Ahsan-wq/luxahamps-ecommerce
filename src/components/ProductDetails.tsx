@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Star, Heart, Share2, ChevronDown, ChevronUp, Truck, RotateCcw, Info } from "lucide-react";
@@ -18,18 +18,37 @@ interface ProductDetailsProps {
 }
 
 export default function ProductDetails({ product, isModal = false }: ProductDetailsProps) {
-  // Mock data for additional fields not in the basic product object
-  const images = [
-    product.image,
-    product.image, // Duplicating for gallery demo
-    product.image,
-    product.image,
-  ];
-  
-  const [selectedImage, setSelectedImage] = useState(0);
+  const [gallery, setGallery] = useState<string[]>([product.image]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [openAccordion, setOpenAccordion] = useState<string | null>("shipping");
   const router = useRouter();
   const { addToCart } = useCartStore();
+
+  useEffect(() => {
+    let active = true
+    ;(async () => {
+      try {
+        const res = await fetch(`/api/products/${encodeURIComponent(String(product.id))}/images`, { cache: 'no-store' })
+        if (res.ok) {
+          const rows = await res.json()
+          const list = Array.isArray(rows) ? rows.map((r: any) => r.image_url).filter(Boolean) : []
+          if (active) {
+            if (list.length > 0) {
+              setGallery(list)
+              setSelectedIndex(0)
+            } else {
+              setGallery([product.image])
+            }
+          }
+        } else {
+          if (active) setGallery([product.image])
+        }
+      } catch {
+        if (active) setGallery([product.image])
+      }
+    })()
+    return () => { active = false }
+  }, [product.id, product.image])
 
   const handleBuyNow = () => {
     addToCart({
@@ -56,7 +75,7 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
         {/* Main Image */}
         <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
           <Image
-            src={images[selectedImage]}
+            src={gallery[selectedIndex] || product.image}
             alt={product.name}
             fill
             className="object-cover object-center"
@@ -71,12 +90,12 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
 
         {/* Thumbnail Gallery */}
         <div className="flex gap-2 overflow-x-auto pb-2">
-          {images.map((img, idx) => (
+          {gallery.map((img, idx) => (
             <button
               key={idx}
-              onClick={() => setSelectedImage(idx)}
+              onClick={() => setSelectedIndex(idx)}
               className={`relative h-20 w-20 flex-shrink-0 overflow-hidden border-2 transition-all ${
-                selectedImage === idx ? "border-black" : "border-transparent hover:border-gray-300"
+                selectedIndex === idx ? "border-black" : "border-transparent hover:border-gray-300"
               }`}
             >
               <Image src={img} alt={`View ${idx + 1}`} fill className="object-cover" />
