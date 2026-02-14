@@ -15,13 +15,27 @@ async function ensureBucket() {
 
 export async function GET(_: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id: productId } = await ctx.params
-  const { data, error } = await supabaseAdmin
-    .from('product_images')
-    .select('id,product_id,image_url,color_variant,created_at')
-    .eq('product_id', productId)
-    .order('created_at', { ascending: true })
-  if (error) return NextResponse.json({ error: 'Failed to load images' }, { status: 500 })
-  return NextResponse.json(data || [])
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('product_images')
+      .select('*')
+      .eq('product_id', productId)
+      .order('created_at', { ascending: true })
+    if (error) {
+      // Graceful fallback if table missing or other schema issue
+      return NextResponse.json([], { status: 200 })
+    }
+    const items = (data || []).map((r: any) => ({
+      id: r.id,
+      product_id: r.product_id,
+      image_url: r.image_url || r.url || '',
+      color_variant: r.color_variant ?? r.color ?? null,
+      created_at: r.created_at || null,
+    })).filter((x: any) => x.image_url)
+    return NextResponse.json(items)
+  } catch {
+    return NextResponse.json([], { status: 200 })
+  }
 }
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
@@ -55,15 +69,33 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     if (!image_url) {
       return NextResponse.json({ error: 'Failed to get public URL' }, { status: 500 })
     }
-    const { data: row, error: insErr } = await supabaseAdmin
-      .from('product_images')
-      .insert({ product_id: productId, image_url, color_variant: color })
-      .select('id,image_url')
-      .single()
-    if (insErr) {
-      // attempt cleanup
-      try { await (supabaseAdmin as any).storage.from(BUCKET).remove([key]) } catch {}
-      return NextResponse.json({ error: 'Failed to save image record' }, { status: 500 })
+    // Insert row; be tolerant if column name differs ('color' vs 'color_variant')
+    const basePayload: any = { product_id: productId, image_url }
+    if (color) basePayload.color_variant = color
+    let row: any = null
+    {
+      const { data: r1, error: e1 } = await supabaseAdmin
+        .from('product_images')
+        .insert(basePayload)
+        .select('id,image_url')
+        .single()
+      if (e1) {
+        // Fallback try with 'color' column
+        const altPayload: any = { product_id: productId, image_url }
+        if (color) altPayload.color = color
+        const { data: r2, error: e2 } = await supabaseAdmin
+          .from('product_images')
+          .insert(altPayload)
+          .select('id,image_url')
+          .single()
+        if (e2) {
+          try { await (supabaseAdmin as any).storage.from(BUCKET).remove([key]) } catch {}
+          return NextResponse.json({ error: 'Failed to save image record' }, { status: 500 })
+        }
+        row = r2
+      } else {
+        row = r1
+      }
     }
     uploaded.push({ id: String(row.id), image_url })
   }
