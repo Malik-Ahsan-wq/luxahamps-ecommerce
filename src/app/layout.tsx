@@ -7,6 +7,8 @@ import CartSidebar from "@/components/CartSidebar";
 import QuickViewModal from "@/components/QuickViewModal";
 import Navbar from "@/app/Navbar/page";
 import Footer from "@/app/Footer/page";
+import OrderRatingPrompt from "@/components/OrderRatingPrompt";
+import MessageButton from "@/components/MessageButton";
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -77,6 +79,8 @@ export default function RootLayout({
         <Footer />
         <CartSidebar />
         <QuickViewModal />
+        <MessageButton />
+        <OrderRatingPrompt />
       </body>
     </html>
   );

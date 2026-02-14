@@ -27,6 +27,7 @@ export default function AdminLayout({
     { title: "Overview", href: "/admin", icon: LayoutDashboard },
     { title: "Products", href: "/admin/products", icon: Package },
     { title: "Orders", href: "/admin/orders", icon: ShoppingCart },
+    { title: "Ratings", href: "/admin/ratings", icon: LayoutDashboard },
   ];
 
   useEffect(() => {

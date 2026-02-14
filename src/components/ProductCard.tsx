@@ -1,9 +1,10 @@
 import React from "react";
 import Link from "next/link";
-import { Heart, Search, Star } from "lucide-react";
+import { Heart, Search } from "lucide-react";
 import AddToCartButton from "@/components/AddToCartButton";
 import { Product } from "@/store/useProductStore";
 import { useQuickViewStore } from "@/store/useQuickViewStore";
+import RatingStars from "./RatingStars";
 
 interface ProductCardProps {
   product: Product;
@@ -104,13 +105,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     
     {/* Discrete Rating */}
     <div className="flex items-center mt-3 opacity-60">
-      <div className="flex text-black gap-0.5">
-        {[...Array(5)].map((_, i) => (
-          <Star key={i} size={10} fill={i < 4 ? "currentColor" : "none"} strokeWidth={1} />
-        ))}
-      </div>
+      <RatingStars value={product.averageRating || 0} readonly size={12} />
       <span className="text-[9px] text-gray-500 font-light ml-2 tracking-widest">
-        (4.8)
+        ({(product.averageRating ?? 0).toFixed(1)})
       </span>
     </div>
   </div>

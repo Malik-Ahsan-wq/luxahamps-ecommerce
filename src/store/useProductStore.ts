@@ -10,6 +10,7 @@ export interface Product {
   sizes: string[];
   inStock: boolean;
   description?: string;
+  averageRating?: number;
 }
 
 interface ProductState {

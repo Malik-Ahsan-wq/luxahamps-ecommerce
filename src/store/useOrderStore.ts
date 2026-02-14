@@ -29,7 +29,7 @@ interface OrderState {
 
 export const useOrderStore = create<OrderState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       orders: [],
       addOrder: (order) => {
         set((state) => ({ orders: [order, ...state.orders] }))
@@ -41,7 +41,7 @@ export const useOrderStore = create<OrderState>()(
               price: i.price,
               quantity: i.quantity,
             }))
-            await fetch('/api/orders', {
+            const res = await fetch('/api/orders', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -57,16 +57,34 @@ export const useOrderStore = create<OrderState>()(
                 },
               }),
             })
+            if (res.ok) {
+              try {
+                const productIds = Array.from(new Set(order.items.map((i) => String(i.id))))
+                if (typeof window !== 'undefined' && productIds.length > 0) {
+                  window.dispatchEvent(new CustomEvent('order:confirmed', { detail: { productIds } }))
+                }
+              } catch {}
+            }
            
           } catch {}
         })()
       },
       updateOrderStatus: (orderId, status) =>
-        set((state) => ({
-          orders: state.orders.map((o) =>
+        set((state) => {
+          const updated = state.orders.map((o) =>
             o.id === orderId ? { ...o, status } : o
-          ),
-        })),
+          )
+          const target = updated.find((o) => o.id === orderId)
+          if (target && (status === 'Confirmed' || status === 'Delivered')) {
+            try {
+              const productIds = Array.from(new Set((target.items || []).map((i) => String(i.id))))
+              if (typeof window !== 'undefined' && productIds.length > 0) {
+                window.dispatchEvent(new CustomEvent('order:confirmed', { detail: { productIds } }))
+              }
+            } catch {}
+          }
+          return { orders: updated }
+        }),
     }),
     {
       name: 'order-storage',

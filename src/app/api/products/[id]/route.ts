@@ -15,7 +15,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     .from('products')
     .update(updates)
     .eq('id', id)
-    .select('id,title,description,price,image,category,stock,created_at')
+    .select('id,title,description,price,image,category,stock,created_at,average_rating')
     .single()
   if (error) return NextResponse.json({ error: 'Update failed' }, { status: 500 })
   const p = {
@@ -29,6 +29,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     inStock: Number(data.stock || 0) > 0,
     description: data.description || '',
     createdAt: data.created_at || null,
+    averageRating: Number((data as any).average_rating || 0),
   }
   return NextResponse.json(p)
 }

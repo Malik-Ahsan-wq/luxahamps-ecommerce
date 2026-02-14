@@ -9,6 +9,8 @@ import { Product } from "@/store/useQuickViewStore";
 import { useCartStore } from "@/store/useCartStore";
 import { formatPrice } from "@/lib/utils";
 import AddToCartButton from "@/components/AddToCartButton";
+import ProductRatingSection from "@/components/ProductRatingSection";
+import ProductReviews from "@/components/ProductReviews";
 
 interface ProductDetailsProps {
   product: Product;
@@ -95,12 +97,8 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
           {product.name}
         </h1>
 
-        {/* Rating */}
-        <div className="mb-4 flex items-center gap-1">
-          {[...Array(5)].map((_, i) => (
-            <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-          ))}
-          <span className="ml-2 text-sm text-gray-500">(12 Reviews)</span>
+        <div className="mb-4">
+          <ProductRatingSection productId={product.id.toString()} />
         </div>
 
         {/* Price */}
@@ -188,6 +186,9 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
               perfect for gifting. 100% authentic products.
             </p>
           </AccordionItem>
+        </div>
+        <div className="mt-8">
+          <ProductReviews productId={product.id.toString()} />
         </div>
       </div>
     </div>

@@ -12,11 +12,15 @@ import { Separator } from "@/components/ui/separator";
 import { formatPrice } from "@/lib/utils";
 import { Loader2, CheckCircle2, ChevronLeft, CreditCard } from "lucide-react";
 import Link from "next/link";
+import AuthModal from "@/components/AuthModal";
+import { useAuthStore, getCurrentSession } from "@/store/useAuthStore";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { cart, getCartTotal, clearCart } = useCartStore();
   const { addOrder } = useOrderStore();
+  const { isAuthenticated } = useAuthStore()
+  const [authOpen, setAuthOpen] = useState(false)
   
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -44,6 +48,10 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAuthenticated) {
+      setAuthOpen(true)
+      return
+    }
     setLoading(true);
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -110,6 +118,7 @@ export default function CheckoutPage() {
   }
 
   return (
+    <>
     <div className="container mx-auto max-w-7xl px-4 py-6 md:py-10">
       <div className="mb-8">
         <Link href="/cart" className="mb-2 flex items-center text-sm font-medium text-muted-foreground hover:text-primary">
@@ -258,5 +267,7 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+    <AuthModal open={authOpen} onOpenChange={setAuthOpen} />
+    </>
   );
 }
