@@ -45,19 +45,33 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const supabase = await getServerSupabase()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  // Try Authorization header first (mobile/web localStorage sessions)
+  const auth = req.headers.get('authorization') || req.headers.get('Authorization')
+  let userId: string | null = null
+  if (auth && auth.startsWith('Bearer ')) {
+    const token = auth.slice(7)
+    try {
+      const { data: u } = await supabaseAdmin.auth.getUser(token)
+      userId = u?.user?.id || null
+    } catch {}
+  }
+  // Fallback to cookie-based server session
+  if (!userId) {
+    const supabase = await getServerSupabase()
+    const { data: { user } } = await supabase.auth.getUser()
+    userId = user?.id || null
+  }
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const body = await req.json()
   const { productId, rating, review } = body || {}
   if (!productId || typeof rating !== 'number') {
     return NextResponse.json({ error: 'Missing productId or rating' }, { status: 400 })
   }
   const r = Math.max(1, Math.min(5, Math.round(rating)))
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('ratings')
     .upsert(
-      { user_id: user.id, product_id: productId, rating: r, review: review || null, updated_at: new Date().toISOString() },
+      { user_id: userId, product_id: productId, rating: r, review: review || null, updated_at: new Date().toISOString() },
       { onConflict: 'user_id,product_id' }
     )
     .select('*')

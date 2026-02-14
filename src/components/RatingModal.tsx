@@ -25,7 +25,11 @@ export default function RatingModal({ productId, open, onOpenChange }: Props) {
     ;(async () => {
       const s = await getCurrentSession()
       if (!s?.user) return
-      const res = await fetch(`/api/ratings/user?productId=${encodeURIComponent(productId)}`, { cache: 'no-store' })
+      const token = s?.access_token || null
+      const res = await fetch(`/api/ratings/user?productId=${encodeURIComponent(productId)}`, {
+        cache: 'no-store',
+        headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+      })
       if (res.ok) {
         const data = await res.json()
         if (data) {
@@ -45,9 +49,14 @@ export default function RatingModal({ productId, open, onOpenChange }: Props) {
         setLoading(false)
         return
       }
+      const session = await getCurrentSession()
+      const token = session?.access_token || null
       const res = await fetch('/api/ratings', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ productId, rating, review }),
       })
       if (!res.ok) {
