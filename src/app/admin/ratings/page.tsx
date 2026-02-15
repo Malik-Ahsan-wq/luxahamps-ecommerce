@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import RatingStars from "@/components/RatingStars";
+import { Star, MessageSquare } from "lucide-react";
 
 type Row = {
   id: string
@@ -29,49 +31,59 @@ export default function AdminRatingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Ratings & Reviews</h1>
-        <p className="text-sm text-gray-500">Overview of all customer ratings</p>
+        <h1 className="text-3xl font-bold tracking-tight">Ratings & Reviews</h1>
+        <p className="text-muted-foreground mt-1">Customer feedback and product ratings</p>
       </div>
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <Table>
-          <TableHeader className="bg-slate-50/50">
-            <TableRow>
-              <TableHead>Product</TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Rating</TableHead>
-              <TableHead>Review</TableHead>
-              <TableHead>Date</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map(r => (
-              <TableRow key={r.id}>
-                <TableCell>
-                  <div className="font-semibold">{r.product_title || r.product_id}</div>
-                </TableCell>
-                <TableCell>
-                  <div className="text-sm">{r.user?.name || r.user?.email || r.user?.id}</div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <RatingStars value={r.rating} readonly />
-                    <Badge variant="outline">{r.rating}</Badge>
-                  </div>
-                </TableCell>
-                <TableCell className="max-w-xl">
-                  <div className="truncate">{r.review || ""}</div>
-                </TableCell>
-                <TableCell>{new Date(r.created_at).toLocaleString()}</TableCell>
-              </TableRow>
-            ))}
-            {rows.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-gray-500">No ratings found</TableCell>
-              </TableRow>
-            ) : null}
-          </TableBody>
-        </Table>
-      </div>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Star className="w-5 h-5" />
+            All Reviews ({rows.length})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {rows.length === 0 ? (
+            <div className="text-center py-12">
+              <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No reviews yet</h3>
+              <p className="text-muted-foreground">Customer reviews will appear here</p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Product</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Rating</TableHead>
+                  <TableHead className="max-w-md">Review</TableHead>
+                  <TableHead>Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map(r => (
+                  <TableRow key={r.id}>
+                    <TableCell className="font-medium">{r.product_title || r.product_id}</TableCell>
+                    <TableCell className="text-sm">{r.user?.name || r.user?.email || r.user?.id}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <RatingStars value={r.rating} readonly />
+                        <Badge variant="outline">{r.rating}/5</Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell className="max-w-md">
+                      <div className="truncate text-sm text-muted-foreground">{r.review || "No review text"}</div>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {new Date(r.created_at).toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }

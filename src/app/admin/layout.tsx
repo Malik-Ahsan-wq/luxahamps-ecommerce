@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, LogOut, Menu, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Sheet,
@@ -24,10 +24,10 @@ export default function AdminLayout({
   const [open, setOpen] = useState(false);
 
   const sidebarItems = [
-    { title: "Overview", href: "/admin", icon: LayoutDashboard },
+    { title: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
     { title: "Products", href: "/admin/products", icon: Package },
     { title: "Orders", href: "/admin/orders", icon: ShoppingCart },
-    { title: "Ratings", href: "/admin/ratings", icon: LayoutDashboard },
+    { title: "Ratings", href: "/admin/ratings", icon: Star },
   ];
 
   useEffect(() => {

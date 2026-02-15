@@ -6,7 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Trash2, X } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Pencil, Trash2, X, Plus, Package, Upload, Image as ImageIcon } from 'lucide-react'
 import Image from 'next/image'
 
 interface Product {
@@ -202,30 +205,24 @@ export default function AdminProductsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Product Management</h1>
-        <div className="flex gap-2">
-          <Button onClick={() => setShowForm(true)}>Add Product</Button>
-          <Button variant="outline" onClick={() => router.push('/admin/dashboard')}>
-            Dashboard
-          </Button>
-          <Button variant="outline" onClick={() => {
-            localStorage.removeItem('admin_session')
-            router.replace('/admin')
-          }}>
-            Logout
-          </Button>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Products</h1>
+          <p className="text-muted-foreground mt-1">Manage your product inventory</p>
         </div>
+        <Button onClick={() => setShowForm(true)} size="lg">
+          <Plus className="w-4 h-4 mr-2" />
+          Add Product
+        </Button>
       </div>
 
-      {showForm && (
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+      <Dialog open={showForm} onOpenChange={(open) => !open && resetForm()}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>Product Name *</Label>
@@ -328,7 +325,7 @@ export default function AdminProductsPage() {
                 </p>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 pt-4">
                 <Button type="submit" disabled={loading || uploading}>
                   {loading ? 'Saving...' : uploading ? 'Uploading...' : 'Save Product'}
                 </Button>
@@ -337,54 +334,86 @@ export default function AdminProductsPage() {
                 </Button>
               </div>
             </form>
-          </CardContent>
-        </Card>
-      )}
+        </DialogContent>
+      </Dialog>
 
-      <div className="grid gap-4">
-        {products.map((product) => (
-          <Card key={product.id}>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="relative w-16 h-16">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover rounded"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold">{product.name}</h3>
-                  <p className="text-sm text-gray-600">{product.category}</p>
-                  <p className="font-bold">${product.price}</p>
-                  <p className="text-sm">Stock: {product.stock}</p>
-                  <p className="text-sm text-gray-500">
-                    Gallery: {product.galleryImages?.length || 0} images
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <Button size="sm" onClick={() => editProduct(product)}>
-                    Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => deleteProduct(product.id)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-        {products.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            No products found. Add your first product!
-          </div>
-        )}
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Package className="w-5 h-5" />
+            All Products ({products.length})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {products.length === 0 ? (
+            <div className="text-center py-12">
+              <Package className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No products yet</h3>
+              <p className="text-muted-foreground mb-4">Get started by adding your first product</p>
+              <Button onClick={() => setShowForm(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Product
+              </Button>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-20">Image</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Stock</TableHead>
+                  <TableHead>Gallery</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {products.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell>
+                      <div className="relative w-12 h-12 rounded-md overflow-hidden border">
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">{product.name}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{product.category || 'Uncategorized'}</Badge>
+                    </TableCell>
+                    <TableCell className="font-semibold">${product.price.toFixed(2)}</TableCell>
+                    <TableCell>
+                      <Badge variant={product.stock > 10 ? 'default' : product.stock > 0 ? 'secondary' : 'destructive'}>
+                        {product.stock} units
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <ImageIcon className="w-4 h-4" />
+                        {product.galleryImages?.length || 0}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button size="sm" variant="outline" onClick={() => editProduct(product)}>
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" variant="destructive" onClick={() => deleteProduct(product.id)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }

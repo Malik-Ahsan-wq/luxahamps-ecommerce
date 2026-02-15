@@ -1,91 +1,145 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Package, ShoppingCart, DollarSign, TrendingUp, Star } from 'lucide-react'
+import Link from 'next/link'
+
+interface Stats {
+  totalOrders: number
+  newOrders: number
+  revenue: number
+  totalProducts: number
+}
 
 export default function AdminDashboardPage() {
   const router = useRouter()
-  const [orders, setOrders] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
+  const [stats, setStats] = useState<Stats>({
+    totalOrders: 0,
+    newOrders: 0,
+    revenue: 0,
+    totalProducts: 0
+  })
 
   useEffect(() => {
-    try {
-      const session = typeof window !== 'undefined' ? localStorage.getItem('admin_session') : null
-      if (!session) {
-        router.replace('/admin')
-        return
-      }
-    } catch {}
-    load()
+    const session = localStorage.getItem('admin_session')
+    if (!session) {
+      router.replace('/admin')
+      return
+    }
+    loadStats()
   }, [router])
 
-  const load = async () => {
-    const res = await fetch('/api/admin/orders', { cache: 'no-store' })
-    const data = await res.json()
-    setOrders(Array.isArray(data) ? data : [])
-  }
-
-  const updateStatus = async (id: string, status: string) => {
-    setLoading(true)
-    await fetch('/api/admin/orders', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, order_status: status })
-    })
-    setLoading(false)
-    load()
-  }
-
-  const onLogout = () => {
+  const loadStats = async () => {
     try {
-      localStorage.removeItem('admin_session')
-    } catch {}
-    router.replace('/admin')
+      const [ordersRes, productsRes] = await Promise.all([
+        fetch('/api/admin/orders', { cache: 'no-store' }),
+        fetch('/api/products', { cache: 'no-store' })
+      ])
+      
+      const orders = await ordersRes.json()
+      const products = await productsRes.json()
+      
+      setStats({
+        totalOrders: Array.isArray(orders) ? orders.length : 0,
+        newOrders: Array.isArray(orders) ? orders.filter((o: any) => o.order_status === 'new').length : 0,
+        revenue: Array.isArray(orders) ? orders.reduce((s: number, o: any) => s + (o.total || 0), 0) : 0,
+        totalProducts: Array.isArray(products) ? products.length : 0
+      })
+    } catch (error) {
+      console.error('Failed to load stats:', error)
+    }
   }
+
+  const statCards = [
+    {
+      title: 'Total Revenue',
+      value: `$${stats.revenue.toFixed(2)}`,
+      icon: DollarSign,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
+      link: '/admin/orders'
+    },
+    {
+      title: 'Total Orders',
+      value: stats.totalOrders,
+      icon: ShoppingCart,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
+      link: '/admin/orders'
+    },
+    {
+      title: 'New Orders',
+      value: stats.newOrders,
+      icon: TrendingUp,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50',
+      link: '/admin/orders'
+    },
+    {
+      title: 'Total Products',
+      value: stats.totalProducts,
+      icon: Package,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+      link: '/admin/products'
+    }
+  ]
+
+  const quickLinks = [
+    { title: 'Manage Products', href: '/admin/products', icon: Package, description: 'Add, edit, or remove products' },
+    { title: 'View Orders', href: '/admin/orders', icon: ShoppingCart, description: 'Process and manage orders' },
+    { title: 'Customer Reviews', href: '/admin/ratings', icon: Star, description: 'View product ratings' }
+  ]
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <Button variant="outline" onClick={onLogout}>Logout</Button>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <p className="text-muted-foreground mt-1">Welcome back! Here's your store overview</p>
       </div>
-      <div className="grid gap-6 md:grid-cols-3 mb-8">
-        <Card>
-          <CardHeader><CardTitle>Total Orders</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{orders.length}</div></CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle>New</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{orders.filter(o => o.order_status === 'new').length}</div></CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle>Revenue</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{orders.reduce((s, o) => s + (o.total || 0), 0)}</div></CardContent>
-        </Card>
-      </div>
-      <div className="mb-6">
-        <Button onClick={() => router.push('/admin/products')} className="mr-2">
-          Manage Products
-        </Button>
-      </div>
-      <div className="space-y-4">
-        {orders.map(o => (
-          <div key={o.id} className="border rounded p-4">
-            <div className="font-semibold">{o.product_title}</div>
-            <div>Qty: {o.quantity}</div>
-            <div>Total: {o.total}</div>
-            <div>User: {o.user_email}</div>
-            <div>Status: {o.order_status}</div>
-            <div className="flex gap-2 mt-2">
-              <Button variant="outline" onClick={() => updateStatus(o.id, 'confirmed')} disabled={loading}>Confirm</Button>
-              <Button variant="outline" onClick={() => updateStatus(o.id, 'shipped')} disabled={loading}>Ship</Button>
-              <Button variant="outline" onClick={() => updateStatus(o.id, 'delivered')} disabled={loading}>Deliver</Button>
-              <Button variant="destructive" onClick={() => updateStatus(o.id, 'cancelled')} disabled={loading}>Cancel</Button>
-            </div>
-          </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {statCards.map((stat) => (
+          <Link key={stat.title} href={stat.link}>
+            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {stat.title}
+                </CardTitle>
+                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
+                  <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stat.value}</div>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
-        {orders.length === 0 && <div>No orders found.</div>}
+      </div>
+
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {quickLinks.map((link) => (
+            <Link key={link.title} href={link.href}>
+              <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-slate-100">
+                      <link.icon className="h-5 w-5 text-slate-600" />
+                    </div>
+                    <CardTitle className="text-base">{link.title}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">{link.description}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   )
