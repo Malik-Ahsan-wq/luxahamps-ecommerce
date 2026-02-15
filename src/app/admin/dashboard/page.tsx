@@ -64,6 +64,11 @@ export default function AdminDashboardPage() {
           <CardContent><div className="text-3xl font-bold">{orders.reduce((s, o) => s + (o.total || 0), 0)}</div></CardContent>
         </Card>
       </div>
+      <div className="mb-6">
+        <Button onClick={() => router.push('/admin/products')} className="mr-2">
+          Manage Products
+        </Button>
+      </div>
       <div className="space-y-4">
         {orders.map(o => (
           <div key={o.id} className="border rounded p-4">

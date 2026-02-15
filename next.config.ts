@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'gifttree.com.pk',
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
       ...(process.env.NEXT_PUBLIC_SUPABASE_URL ? [{
         protocol: 'https' as const,
         hostname: new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname,

@@ -64,6 +64,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to save order' }, { status: 500 })
     }
 
+    // Reduce stock for each product
+    for (const item of list) {
+      const productId = item.id || item.product_id
+      const quantity = typeof item.quantity === 'number' ? item.quantity : Number(item.quantity) || 1
+      
+      if (productId) {
+        const { data: product } = await supabaseAdmin
+          .from('products')
+          .select('stock')
+          .eq('id', productId)
+          .single()
+        
+        if (product) {
+          const newStock = Math.max(0, (product.stock || 0) - quantity)
+          await supabaseAdmin
+            .from('products')
+            .update({ stock: newStock })
+            .eq('id', productId)
+        }
+      }
+    }
+
     return NextResponse.json({ ok: true, total: totalAmount })
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })

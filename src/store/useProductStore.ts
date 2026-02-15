@@ -11,6 +11,8 @@ export interface Product {
   inStock: boolean;
   description?: string;
   averageRating?: number;
+  stock?: number;
+  galleryImages?: string[];
 }
 
 interface ProductState {

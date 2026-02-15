@@ -29,7 +29,7 @@ export default function ProductPage() {
       description: foundProduct.description,
       oldPrice: Math.round(foundProduct.price * 1.25),
       discount: "25% OFF",
-      stock: foundProduct.inStock ? 20 : 0
+      stock: (foundProduct as any).stock || 0
     }
   }, [id, products])
 

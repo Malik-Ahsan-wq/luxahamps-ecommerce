@@ -28,22 +28,32 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
     let active = true
     ;(async () => {
       try {
-        const res = await fetch(`/api/products/${encodeURIComponent(String(product.id))}/images`, { cache: 'no-store' })
+        const res = await fetch(`/api/products`, { cache: 'no-store' })
         if (res.ok) {
-          const rows = await res.json()
-          const list = Array.isArray(rows) ? rows.map((r: any) => r.image_url).filter(Boolean) : []
-          if (active) {
-            if (list.length > 0) {
-              setGallery(list)
+          const products = await res.json()
+          const currentProduct = products.find((p: any) => p.id === product.id || p.id.toString() === product.id)
+          console.log('Found product:', currentProduct)
+          console.log('Gallery images:', currentProduct?.galleryImages)
+          if (active && currentProduct) {
+            const galleryUrls = Array.isArray(currentProduct.galleryImages) ? currentProduct.galleryImages : []
+            console.log('Processed gallery URLs:', galleryUrls)
+            if (galleryUrls.length > 0) {
+              const allImages = [product.image, ...galleryUrls]
+              console.log('Setting gallery with all images:', allImages)
+              setGallery(allImages)
               setSelectedIndex(0)
             } else {
+              console.log('No gallery images, using main image only')
               setGallery([product.image])
             }
+          } else if (active) {
+            setGallery([product.image])
           }
         } else {
           if (active) setGallery([product.image])
         }
-      } catch {
+      } catch (error) {
+        console.error('Error loading gallery:', error)
         if (active) setGallery([product.image])
       }
     })()
@@ -65,8 +75,8 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
     setOpenAccordion(openAccordion === id ? null : id);
   };
 
-  const stockLeft = 20; // Mock stock
-  const stockProgress = 20; // Percentage for the bar
+  const stockLeft = product.stock || 0
+  const stockProgress = Math.min((stockLeft / 50) * 100, 100) // Progress based on max 50 items
 
   return (
     <div className={`grid grid-cols-1 gap-8 ${isModal ? 'lg:grid-cols-2' : 'md:grid-cols-2'} h-full`}>
@@ -98,7 +108,7 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
                 selectedIndex === idx ? "border-black" : "border-transparent hover:border-gray-300"
               }`}
             >
-              <Image src={img} alt={`View ${idx + 1}`} fill className="object-cover" />
+              <Image src={img} alt={`View ${idx + 1}`} fill sizes="80px" className="object-cover" />
             </button>
           ))}
         </div>
@@ -133,15 +143,23 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
 
         {/* Stock Indicator */}
         <div className="mb-8">
-          <p className="mb-2 text-xs font-bold uppercase text-gray-900">
-            Hurry, Only <span className="text-pink-600">{stockLeft}</span> hampers left in stock!
-          </p>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
-            <div
-              className="h-full bg-gradient-to-r from-pink-500 to-pink-600"
-              style={{ width: `${stockProgress}%` }}
-            />
-          </div>
+          {stockLeft > 0 ? (
+            <>
+              <p className="mb-2 text-xs font-bold uppercase text-gray-900">
+                In Stock: <span className="text-green-600">{stockLeft}</span> items available
+              </p>
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+                <div
+                  className="h-full bg-gradient-to-r from-green-500 to-green-600"
+                  style={{ width: `${stockProgress}%` }}
+                />
+              </div>
+            </>
+          ) : (
+            <p className="mb-2 text-xs font-bold uppercase text-red-600">
+              Out of Stock
+            </p>
+          )}
         </div>
 
         {/* Actions */}
@@ -156,12 +174,14 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
             }}
             variant="outline"
             className="w-full rounded-none border-black py-4 text-sm font-bold uppercase tracking-widest hover:bg-black hover:text-white"
+            disabled={stockLeft === 0}
           />
           <button 
             onClick={handleBuyNow}
-            className="w-full bg-black py-4 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:bg-gray-800"
+            disabled={stockLeft === 0}
+            className="w-full bg-black py-4 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            Buy It Now
+            {stockLeft > 0 ? 'Buy It Now' : 'Out of Stock'}
           </button>
         </div>
 
