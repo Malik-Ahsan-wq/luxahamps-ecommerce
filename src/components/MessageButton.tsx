@@ -1,13 +1,48 @@
 'use client'
 import React from 'react';
-import { MessageCircle } from 'lucide-react';
+import { usePathname } from 'next/navigation'
+import { useCartStore } from '@/store/useCartStore'
+import { generateProductOrderMessage, generateCartOrderMessage, openWhatsApp } from '@/lib/whatsapp'
 
 const WhatsAppConcierge = () => {
+  const pathname = usePathname()
+  const { items } = useCartStore()
+
   const handleWhatsAppClick = () => {
-    // Replace with your actual number and message
-    const phoneNumber = "1234567890";
-    const message = "Hello LuxaHamp, I'd like to inquire about...";
-    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    const currentUrl = window.location.href
+    
+    // Check if on cart page
+    if (pathname === '/cart' && items.length > 0) {
+      const cartItems = items.map(item => ({
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      }))
+      const message = generateCartOrderMessage(cartItems, currentUrl)
+      openWhatsApp(message)
+      return
+    }
+    
+    // Check if on product page
+    const productMatch = pathname?.match(/^\/product\/(.+)/)
+    if (productMatch) {
+      const productName = document.querySelector('h1')?.textContent || 'Product'
+      const priceElement = document.querySelector('[class*="price"]')?.textContent
+      const price = priceElement ? parseFloat(priceElement.replace(/[^0-9.]/g, '')) : 0
+      
+      const message = generateProductOrderMessage({
+        name: productName,
+        price: price,
+        quantity: 1,
+        url: currentUrl
+      })
+      openWhatsApp(message)
+      return
+    }
+    
+    // Default message
+    const defaultMessage = "Hello! I'm interested in your products."
+    openWhatsApp(defaultMessage)
   };
 
   return (
