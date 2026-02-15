@@ -52,6 +52,10 @@ export default function AdminProductsPage() {
     loadProducts()
   }, [router])
 
+  useEffect(() => {
+    handleSearch(searchQuery)
+  }, [products])
+
   const loadProducts = async () => {
     try {
       const res = await fetch('/api/products', { cache: 'no-store' })

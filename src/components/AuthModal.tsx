@@ -1,12 +1,12 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
-import { Mail, Lock, Loader2 } from "lucide-react";
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithGithub, getCurrentSession, useAuthStore } from '@/store/useAuthStore'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 type Props = {
   open: boolean
@@ -87,6 +87,9 @@ export default function AuthModal({ open, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
+        <div className="flex justify-center mb-4">
+          <Image src="/assets/mainlogo.cb44b92e.svg" alt="Logo" width={120} height={40} priority />
+        </div>
         <DialogHeader>
           <DialogTitle className='text-pink-400'>{mode === 'login' ? 'Login' : 'Sign Up'}</DialogTitle>
           <DialogDescription>
