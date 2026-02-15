@@ -3,6 +3,7 @@ import { Search, ChevronDownIcon, Gift, User, Heart, ShoppingCart, Menu, X, Layo
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useCartStore } from '@/store/useCartStore'
+import { useWishlistStore } from '@/store/useWishlistStore'
 import { Badge } from '@/components/ui/badge'
 import { useRouter } from 'next/navigation'
 import AuthModal from '@/components/AuthModal'
@@ -17,7 +18,9 @@ export default function Navbar() {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
   const router = useRouter()
   const { openCart, getCartItemsCount } = useCartStore();
+  const { getWishlistCount } = useWishlistStore();
   const cartCount = getCartItemsCount();
+  const wishlistCount = getWishlistCount();
   const { isAuthenticated, user } = useAuthStore()
 
   useEffect(() => {
@@ -184,7 +187,14 @@ www.ahsanmalik.xyz            </span>
                 )}
               </div>
               
-              {/* <Heart className="w-5 h-5 cursor-pointer hover:text-pink-600" /> */}
+              <Link href="/wishlist" className="relative cursor-pointer">
+                <Heart className="w-5 h-5 hover:text-pink-600" />
+                {isMounted && wishlistCount > 0 && (
+                  <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-pink-600 text-[10px] text-white">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
               
               <div className="relative cursor-pointer" onClick={openCart}>
                 <ShoppingCart className="w-5 h-5 hover:text-pink-600" />

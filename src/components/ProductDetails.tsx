@@ -7,6 +7,7 @@ import { Star, Heart, Share2, ChevronDown, ChevronUp, Truck, RotateCcw, Info } f
 import { motion, AnimatePresence } from "framer-motion";
 import { Product } from "@/store/useQuickViewStore";
 import { useCartStore } from "@/store/useCartStore";
+import { useWishlistStore } from "@/store/useWishlistStore";
 import { formatPrice } from "@/lib/utils";
 import AddToCartButton from "@/components/AddToCartButton";
 import ProductRatingSection from "@/components/ProductRatingSection";
@@ -23,6 +24,21 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
   const [openAccordion, setOpenAccordion] = useState<string | null>("shipping");
   const router = useRouter();
   const { addToCart } = useCartStore();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
+  const inWishlist = isInWishlist(product.id.toString());
+
+  const handleWishlistToggle = () => {
+    if (inWishlist) {
+      removeFromWishlist(product.id.toString());
+    } else {
+      addToWishlist({
+        id: product.id.toString(),
+        name: product.name,
+        price: product.price,
+        image: product.image
+      });
+    }
+  };
 
   useEffect(() => {
     let active = true
@@ -164,18 +180,31 @@ export default function ProductDetails({ product, isModal = false }: ProductDeta
 
         {/* Actions */}
         <div className="mb-8 flex flex-col gap-3">
-          <AddToCartButton
-            product={{
-                id: product.id.toString(),
-                name: product.name,
-                price: product.price,
-                image: product.image,
-                category: (product as any).category || "",
-            }}
-            variant="outline"
-            className="w-full rounded-none border-black py-4 text-sm font-bold uppercase tracking-widest hover:bg-black hover:text-white"
-            disabled={stockLeft === 0}
-          />
+          <div className="flex gap-3">
+            <AddToCartButton
+              product={{
+                  id: product.id.toString(),
+                  name: product.name,
+                  price: product.price,
+                  image: product.image,
+                  category: (product as any).category || "",
+              }}
+              variant="outline"
+              className="flex-1 rounded-none border-black py-4 text-sm font-bold uppercase tracking-widest hover:bg-black hover:text-white"
+              disabled={stockLeft === 0}
+            />
+            <button
+              onClick={handleWishlistToggle}
+              className={`px-4 py-4 border-2 transition-colors ${
+                inWishlist 
+                  ? 'border-pink-600 bg-pink-50 text-pink-600' 
+                  : 'border-black hover:bg-black hover:text-white'
+              }`}
+              aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+            >
+              <Heart className="w-5 h-5" fill={inWishlist ? 'currentColor' : 'none'} />
+            </button>
+          </div>
           <button 
             onClick={handleBuyNow}
             disabled={stockLeft === 0}

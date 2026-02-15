@@ -4,6 +4,7 @@ import { Heart, Search } from "lucide-react";
 import AddToCartButton from "@/components/AddToCartButton";
 import { Product } from "@/store/useProductStore";
 import { useQuickViewStore } from "@/store/useQuickViewStore";
+import { useWishlistStore } from "@/store/useWishlistStore";
 import RatingStars from "./RatingStars";
 
 interface ProductCardProps {
@@ -11,8 +12,24 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  // Safe check for useQuickViewStore if it might not exist or be different
   const openQuickView = useQuickViewStore ? useQuickViewStore((state) => state.openQuickView) : () => {};
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
+  const inWishlist = isInWishlist(product.id);
+
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (inWishlist) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image
+      });
+    }
+  };
 
   // Mock data for missing fields to match the design
   const oldPrice = Math.round(product.price * 1.25); // Mock 25% more
@@ -60,8 +77,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       >
         <Search size={16} strokeWidth={1.2} />
       </button>
-      <button className="w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-md border border-gray-100 text-black hover:bg-black hover:text-white transition-all duration-300 rounded-full shadow-sm">
-        <Heart size={16} strokeWidth={1.2} />
+      <button 
+        onClick={handleWishlistToggle}
+        className={`w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-md border border-gray-100 hover:bg-black hover:text-white transition-all duration-300 rounded-full shadow-sm ${
+          inWishlist ? 'text-pink-600' : 'text-black'
+        }`}
+      >
+        <Heart size={16} strokeWidth={1.2} fill={inWishlist ? 'currentColor' : 'none'} />
       </button>
     </div>
 
