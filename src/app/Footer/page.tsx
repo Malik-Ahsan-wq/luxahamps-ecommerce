@@ -53,7 +53,7 @@ const Footer = () => {
           <div className="col-span-2 lg:col-span-2 flex flex-col gap-4">
             <h4 className="text-gray-400 font-bold text-xs uppercase tracking-widest">Exclusive Benefits</h4>
             
-            <div className="relative group max-w-sm">
+            {/* <div className="relative group max-w-sm">
               <input 
                 type="email" 
                 placeholder="Enter email here" 
@@ -62,7 +62,7 @@ const Footer = () => {
               <button className="absolute right-0 top-1/2 -translate-y-1/2 hover:text-pink-600 transition-colors">
                 <ArrowRight size={18} />
               </button>
-            </div>
+            </div> */}
             
             <p className="text-gray-500 text-sm leading-relaxed max-w-sm">
               Apply for our free newsletter to receive exclusive deals, news, and other updates.

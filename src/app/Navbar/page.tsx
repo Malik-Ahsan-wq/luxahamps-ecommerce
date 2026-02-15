@@ -11,7 +11,7 @@ import { useAuthStore, signOut, getCurrentSession } from '@/store/useAuthStore'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
-  const [searchOpen, setSearchOpen] = useState(false)
+  // const [searchOpen, setSearchOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false);
   const [authOpen, setAuthOpen] = useState(false)
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
@@ -136,10 +136,7 @@ www.ahsanmalik.xyz            </span>
 
             {/* ICONS (ALWAYS VISIBLE) */}
             <div className="flex items-center gap-4">
-              <Search
-                className="w-5 h-5 cursor-pointer"
-                onClick={() => setSearchOpen(true)}
-              />
+              
               <div className="relative">
                 {isAuthenticated ? (
                   <button
@@ -230,13 +227,7 @@ www.ahsanmalik.xyz            </span>
       )}
 
       {/* Search Overlay */}
-      <div
-        className={`fixed top-0 left-0 w-full z-50 bg-white shadow-md p-4 flex items-center gap-4 transform transition-all duration-300 ease-in-out ${searchOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}
-      >
-         <Search className="w-5 h-5 text-gray-500" />
-         <input type="text" placeholder="Search..." className="flex-1 outline-none text-lg" autoFocus={searchOpen} />
-         <X className="w-6 h-6 cursor-pointer hover:text-red-500" onClick={() => setSearchOpen(false)} />
-      </div>
+     
 
       
       <AuthModal open={authOpen} onOpenChange={setAuthOpen} />
