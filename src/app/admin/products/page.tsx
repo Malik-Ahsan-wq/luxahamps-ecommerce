@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Pencil, Trash2, X, Plus, Package, Upload, Image as ImageIcon } from 'lucide-react'
+import { Pencil, Trash2, X, Plus, Package, Search, Filter } from 'lucide-react'
 import Image from 'next/image'
 
 interface Product {
@@ -26,6 +26,8 @@ interface Product {
 export default function AdminProductsPage() {
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(false)
@@ -54,7 +56,9 @@ export default function AdminProductsPage() {
     try {
       const res = await fetch('/api/products', { cache: 'no-store' })
       const data = await res.json()
-      setProducts(Array.isArray(data) ? data : [])
+      const productList = Array.isArray(data) ? data : []
+      setProducts(productList)
+      setFilteredProducts(productList)
     } catch (error) {
       console.error('Failed to load products:', error)
     }
@@ -204,16 +208,45 @@ export default function AdminProductsPage() {
     }
   }
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query)
+    if (!query.trim()) {
+      setFilteredProducts(products)
+      return
+    }
+    const filtered = products.filter(p => 
+      p.name.toLowerCase().includes(query.toLowerCase()) ||
+      p.category.toLowerCase().includes(query.toLowerCase())
+    )
+    setFilteredProducts(filtered)
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Products</h1>
-          <p className="text-muted-foreground mt-1">Manage your product inventory</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Products</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Manage your product inventory</p>
         </div>
-        <Button onClick={() => setShowForm(true)} size="lg">
+        <Button onClick={() => setShowForm(true)} size="lg" className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           Add Product
+        </Button>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search products by name or category..."
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Button variant="outline" className="w-full sm:w-auto">
+          <Filter className="w-4 h-4 mr-2" />
+          Filter
         </Button>
       </div>
 
@@ -338,79 +371,85 @@ export default function AdminProductsPage() {
       </Dialog>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg">
             <Package className="w-5 h-5" />
-            All Products ({products.length})
+            All Products ({filteredProducts.length})
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          {products.length === 0 ? (
-            <div className="text-center py-12">
+        <CardContent className="p-0">
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-12 px-4">
               <Package className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No products yet</h3>
-              <p className="text-muted-foreground mb-4">Get started by adding your first product</p>
-              <Button onClick={() => setShowForm(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Add Product
-              </Button>
+              <h3 className="text-lg font-semibold mb-2">
+                {searchQuery ? 'No products found' : 'No products yet'}
+              </h3>
+              <p className="text-muted-foreground mb-4 text-sm">
+                {searchQuery ? 'Try a different search term' : 'Get started by adding your first product'}
+              </p>
+              {!searchQuery && (
+                <Button onClick={() => setShowForm(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Product
+                </Button>
+              )}
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-20">Image</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Stock</TableHead>
-                  <TableHead>Gallery</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {products.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>
-                      <div className="relative w-12 h-12 rounded-md overflow-hidden border">
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">{product.name}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{product.category || 'Uncategorized'}</Badge>
-                    </TableCell>
-                    <TableCell className="font-semibold">${product.price.toFixed(2)}</TableCell>
-                    <TableCell>
-                      <Badge variant={product.stock > 10 ? 'default' : product.stock > 0 ? 'secondary' : 'destructive'}>
-                        {product.stock} units
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <ImageIcon className="w-4 h-4" />
-                        {product.galleryImages?.length || 0}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button size="sm" variant="outline" onClick={() => editProduct(product)}>
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button size="sm" variant="destructive" onClick={() => deleteProduct(product.id)}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-16 sm:w-20">Image</TableHead>
+                    <TableHead className="min-w-[150px]">Name</TableHead>
+                    <TableHead className="hidden md:table-cell">Category</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead className="hidden sm:table-cell">Stock</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredProducts.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell>
+                        <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-md overflow-hidden border">
+                          <Image
+                            src={product.image}
+                            alt={product.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        <div className="flex flex-col">
+                          <span className="text-sm">{product.name}</span>
+                          <span className="text-xs text-muted-foreground md:hidden">{product.category}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <Badge variant="secondary" className="text-xs">{product.category || 'Uncategorized'}</Badge>
+                      </TableCell>
+                      <TableCell className="font-semibold text-sm">${product.price.toFixed(2)}</TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        <Badge variant={product.stock > 10 ? 'default' : product.stock > 0 ? 'secondary' : 'destructive'} className="text-xs">
+                          {product.stock}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1 sm:gap-2">
+                          <Button size="sm" variant="outline" onClick={() => editProduct(product)} className="h-8 w-8 p-0">
+                            <Pencil className="w-3 h-3 sm:w-4 sm:h-4" />
+                          </Button>
+                          <Button size="sm" variant="destructive" onClick={() => deleteProduct(product.id)} className="h-8 w-8 p-0">
+                            <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
