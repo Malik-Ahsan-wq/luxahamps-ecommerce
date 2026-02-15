@@ -1,5 +1,5 @@
 'use client'
-import { Search, ChevronDownIcon, Gift, User, Heart, ShoppingCart, Menu, X, LayoutDashboard, LogIn } from 'lucide-react'
+import { Search, ChevronDownIcon, Gift, User, Heart, ShoppingCart, Menu, X, LayoutDashboard, LogIn, BookOpen } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useCartStore } from '@/store/useCartStore'
@@ -129,6 +129,9 @@ www.ahsanmalik.xyz            </span>
             <div className="hidden md:flex items-center space-x-8">
               <Link href="/" className="text-sm font-medium hover:text-pink-600 transition-colors">HOME</Link>
               <Link href="/products" className="text-sm font-medium hover:text-pink-600 transition-colors">SHOP</Link>
+              <Link href="/docs" className="text-sm font-medium hover:text-pink-600 transition-colors flex items-center gap-1">
+                <BookOpen className="w-4 h-4" /> DOCS
+              </Link>
               <Link href="/gift-builder" className="text-sm font-medium bg-pink-600 p-2 rounded text-white hover:bg-pink-700 transition-colors flex items-center gap-1">
                 <Gift className="w-4 h-4" /> MAKE YOUR GIFT
               </Link>
@@ -208,6 +211,9 @@ www.ahsanmalik.xyz            </span>
              <div className="space-y-4">
               <Link href="/" className="block text-lg font-medium hover:text-pink-600 border-b pb-2" onClick={() => setOpen(false)}>HOME</Link>
               <Link href="/products" className="block text-lg font-medium hover:text-pink-600 border-b pb-2" onClick={() => setOpen(false)}>SHOP</Link>
+              <Link href="/docs" className="block text-lg font-medium hover:text-pink-600 border-b pb-2 flex items-center gap-2" onClick={() => setOpen(false)}>
+                <BookOpen className="w-5 h-5" /> DOCS
+              </Link>
               <Link href="/gift-builder" className="block text-lg font-medium text-pink-600 hover:text-pink-700 border-b pb-2 flex items-center gap-2" onClick={() => setOpen(false)}>
                 <Gift className="w-5 h-5" /> MAKE YOUR GIFT
               </Link>
